@@ -9,7 +9,13 @@ import {
   Link as ChakraLink,
   useMediaQuery,
   useDisclosure,
+  Box,
+
 } from "@chakra-ui/react";
+
+import {
+  FiScissors,
+} from "react-icons/fi";
 
 import Link from "next/link";
 import { IoMdPerson } from "react-icons/io";
@@ -178,91 +184,93 @@ export default function Dashboard({ schedule }: DashboardProps) {
             const { displayDate, displayTime } = getDateTime(item);
             return (
               <ChakraLink
-                onClick={() => handleOpenModal(item)}
-                key={item?.id}
+              onClick={() => handleOpenModal(item)}
+              key={item?.id}
+              w="100%"
+              m={0}
+              p={0}
+              mt={1}
+              bg="transparent"
+              style={{ textDecoration: "none" }}
+            >
+              <Flex
                 w="100%"
-                m={0}
-                p={0}
-                mt={1}
-                bg="transparent"
-                style={{ textDecoration: "none" }}
+                direction={isMobile ? "column" : "row"}
+                p={4}
+                rounded={4}
+                mb={2}
+                bg="barber.400"
+                align={isMobile ? "center" : "center"}
+                justifyContent={isMobile ? "center" : "space-between"}
+                textAlign={"center"}
+                gap={5}
               >
                 <Flex
                   w="100%"
-                  direction={isMobile ? "column" : "row"}
-                  p={4}
-                  rounded={4}
-                  mb={2}
-                  bg="barber.400"
-                  align={isMobile ? "center" : "center"}
-                  justifyContent={isMobile ? "center" : "space-between"}
-                  textAlign={"center"}
-                  gap={10}
+                  align="center"
+                  justify="space-between"
+                  direction="row"
+                  mb={isMobile ? 2 : 0}
                 >
-                  
-                  <Flex
-                    direction="row"
-                    mb={isMobile ? 0 : 0}
-                    align="center"
-                    justify={isMobile ? "center" :"flex-start"}
-                    textAlign="center"
-                    w="100%"
-                  >
-                      <IoMdPerson  size={30} color="#f1f1f1" />
-                      <Container
-                        w="fit-content"
-                        textAlign="center"
-                        ml={isMobile ? 2 : 4}
-                        p={0}
-                        m={0}
-                      >
-                      <Text
-                        fontWeight="bold"
-                        noOfLines={1}
-                        ml={isMobile ? "0" : "3"}
-                        textAlign="center"
-                        w="100%"
-                      >
-                        {item?.customer}
-                      </Text>
-                    </Container>
-                  </Flex>
-                  <Container minW='30px' textAlign="center">
-                    <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
-                      {item?.haircut?.name}
-                    </Text>
-                  </Container>
-                  <Container minW='30px' textAlign="center">
-                    <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
-                      R$ {item?.haircut?.price}
-                    </Text>
-                  </Container>
-                  <Container minW='30px' textAlign="center" justifyItems="center">
-                    <Text fontSize="sm" color="gray.300">
-                      {item.source === "telegram" ? <FaTelegram size={30} color="#0088cc" /> : <FaMobileAlt size={30} /> }
-                    </Text>
-                  </Container>
-                  {(displayDate || displayTime) && (  
-                    <Flex
-                      direction={"column"}
-                      align={isMobile ? "flex-start" : "flex-end"}
+                  <Flex align="center">
+                    <IoMdPerson size={30} color="#f1f1f1" />
+                    <Text
+                      fontWeight="bold"
+                      noOfLines={1}
+                      ml={isMobile ? 2 : 4}
+                      textAlign="left"
+                      fontSize="md"
                     >
-                      {displayDate && (
-                        <Container minW='30px' textAlign="center">
-                          <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
-                            {displayDate}
-                          </Text>
-                        </Container>
-                      )}
-                      {displayTime && (
-                        <Container minW='30px' textAlign="center">
-                          <Text fontWeight="bold">{displayTime}</Text>
-                        </Container>
-                      )}
-                    </Flex>
-                  )}
+                      {item?.customer}
+                    </Text>
+                  </Flex>
+
+                  <Box ml={0}>
+                    {item.source === "telegram" ? (
+                      <FaTelegram size={24} color="#0088cc" />
+                    ) : (
+                      <FaMobileAlt size={24} color="#f1f1f1" />
+                    )}
+                  </Box>
                 </Flex>
-              </ChakraLink>
+                <Container
+                  minW="30px"
+                  textAlign="center"
+                  display={{ base: "none", md: "block" }}
+                  >
+                <Flex align="center" justify="center">
+                  <FiScissors size={24} style={{ marginRight: 6 }} />
+                  <Text fontWeight="bold">{item?.haircut?.name}</Text>
+                </Flex>
+              </Container>
+                <Container
+                  minW="30px"
+                  textAlign="center"
+                  display={{ base: "none", md: "block" }}
+                >
+                  <Text fontWeight="bold">R$ {item?.haircut?.price}</Text>
+                </Container>
+                {(displayDate || displayTime) && (
+                  <Flex
+                    direction={"column"}
+                    align={isMobile ? "flex-start" : "flex-end"}
+                  >
+                    {displayDate && (
+                      <Container minW="30px" textAlign="center">
+                        <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
+                          {displayDate}
+                        </Text>
+                      </Container>
+                    )}
+                    {displayTime && (
+                      <Container minW="30px" textAlign="center">
+                        <Text fontWeight="bold">{displayTime}</Text>
+                      </Container>
+                    )}
+                  </Flex>
+                )}
+              </Flex>
+            </ChakraLink>
             );
           })}
         </Flex>
