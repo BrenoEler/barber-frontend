@@ -14,6 +14,7 @@ import {
   Divider,
   Center,
 } from "@chakra-ui/react";
+import { useMediaQuery } from "@chakra-ui/react";
 import { useState } from "react";
 import { SingleDatepicker } from "chakra-dayzed-datepicker";
 import { IconType } from "react-icons"; //Tipagem de icones
@@ -33,6 +34,7 @@ export interface ReportProps {
 export default function Reports() {
   const [selectDate, setSelectDate] = useState<Date | null>(new Date());
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile] = useMediaQuery("(max-width: 500px)");
 
   const reportItems: Array<ReportProps> = [
     // {
@@ -92,7 +94,7 @@ export default function Reports() {
             Relatórios
           </Heading>
           {/*Utilizar o MAP para renderizar as opções do select*/}
-          <Flex direction="row" align="center" gap={4}>
+          <Flex direction="row" wrap={isMobile ? "wrap" : "nowrap"} align="center" gap={4}>
 
             <Select color="orange.900"  _hover={{ bg: "gray.800" }}>
 
@@ -108,11 +110,11 @@ export default function Reports() {
 
             {/* Periodo do filtro, logo apos criar uma validação para que a data inicial seja menor que a data final*/}
 
-            <Input type="date" w="300px" placeholder="Data inicial" color="orange.900"  _hover={{ bg: "gray.800" }} />
-            <Input type="date" w="300px" placeholder="Data final" color="orange.900"  _hover={{ bg: "gray.800" }} />
+            <Input type="date" w={isMobile ? "100%" : "300px"} placeholder="Data inicial" color="orange.900"  _hover={{ bg: "gray.800" }} />
+            <Input type="date" w={isMobile ? "100%" : "300px"} placeholder="Data final" color="orange.900"  _hover={{ bg: "gray.800" }} />
 
             <Button
-              w="300px"
+              w={isMobile ? "100%" : "300px"}
               size="lg"
               color="gray.900"
               bg="button.cta"
@@ -135,7 +137,7 @@ export default function Reports() {
           </Flex>
 
           <Flex justify="flex-end" marginTop="10">
-            <Button leftIcon={<Icon as={FaFilePdf} w={5} h={5} />} w="200px" size="lg" color="gray.900" bg="button.cta" _hover={{ bg: "#FFb13e" }}>
+            <Button leftIcon={<Icon as={FaFilePdf} w={5} h={5} />} w={isMobile ? "100%" : "200px"} size="lg" color="gray.900" bg="button.cta" _hover={{ bg: "#FFb13e" }}>
               Exportar relatório
             </Button>
           </Flex>
