@@ -14,7 +14,7 @@ import {
 } from "@chakra-ui/react";
 
 import {
-  FiScissors,
+  FiScissors, FiCalendar, FiDollarSign
 } from "react-icons/fi";
 
 import Link from "next/link";
@@ -203,7 +203,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
                 align={isMobile ? "center" : "center"}
                 justifyContent={isMobile ? "center" : "space-between"}
                 textAlign={"center"}
-                gap={5}
+                gap={isMobile ? 5 : 0}
               >
                 <Flex
                   w="100%"
@@ -243,20 +243,27 @@ export default function Dashboard({ schedule }: DashboardProps) {
                   <Text fontWeight="bold">{item?.haircut?.name}</Text>
                 </Flex>
               </Container>
+              <Flex display={isMobile ? "none" : "flex"} justify="flex-end">
+                <FiDollarSign  size={24}/>
+              </Flex>
                 <Container
                   minW="30px"
                   textAlign="center"
                   display={{ base: "none", md: "block" }}
                 >
-                  <Text fontWeight="bold">R$ {item?.haircut?.price}</Text>
+                  <Flex>
+                    <Text fontWeight="bold">R$ {item?.haircut?.price}</Text>
+                  </Flex>
                 </Container>
+                
                 {(displayDate || displayTime) && (
                   <Flex
                     direction={"column"}
                     align={isMobile ? "flex-start" : "flex-end"}
                   >
                     {displayDate && (
-                      <Container minW="30px" textAlign="center">
+                      <Container minW="30px" textAlign="center" display="flex">       
+                  <FiCalendar size={24} style={{ marginRight: 6 }}/>
                         <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
                           {displayDate}
                         </Text>
