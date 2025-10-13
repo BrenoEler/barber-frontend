@@ -5,26 +5,26 @@ import {
   Text,
   Heading,
   Button,
-  Container,
   Link as ChakraLink,
   useMediaQuery,
   useDisclosure,
   Box,
-
+  Divider,
+  useColorModeValue,
+  Icon,
+  Badge,
+  VStack,
 } from "@chakra-ui/react";
 
-import {
-  FiScissors, FiCalendar, FiDollarSign
-} from "react-icons/fi";
+import { FiScissors, FiCalendar, FiDollarSign } from "react-icons/fi";
+import { IoMdPerson } from "react-icons/io";
+import { FaTelegram, FaMobileAlt } from "react-icons/fa";
 
 import Link from "next/link";
-import { IoMdPerson } from "react-icons/io";
-
-import { canSSRAuth } from "../../utils/canSSRAuth";
 import { Sidebar } from "../../components/sidebar";
-import { setupAPIClient } from "../../services/api";
 import { ModalInfo } from "../../components/modal";
-import { FaTelegram, FaMobileAlt  } from 'react-icons/fa';
+import { setupAPIClient } from "../../services/api";
+import { canSSRAuth } from "../../utils/canSSRAuth";
 
 export interface ScheduleItem {
   id: string;
@@ -56,13 +56,14 @@ interface DashboardProps {
 }
 
 export default function Dashboard({ schedule }: DashboardProps) {
-  // Os schedules já vêm filtrados do servidor (apenas com status 'active')
   const [list, setList] = useState(schedule);
   const [service, setService] = useState<ScheduleItem>();
-
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [isMobile] = useMediaQuery("(max-width: 600px)");
 
-  const [isMobile] = useMediaQuery("(max-width: 500px)");
+  const cardBg = useColorModeValue("barber.400", "gray.800");
+  const hoverBg = useColorModeValue("whiteAlpha.300", "gray.700");
+  const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
 
   function handleOpenModal(item: ScheduleItem) {
     setService(item);
@@ -70,7 +71,6 @@ export default function Dashboard({ schedule }: DashboardProps) {
   }
 
   function getDateTime(item: ScheduleItem) {
-    // Tenta compor a partir de campos separados
     const dateStr = item.date || item.data;
     const timeStr = item.time || item.horario;
     const combined =
@@ -82,7 +82,6 @@ export default function Dashboard({ schedule }: DashboardProps) {
       return { displayDate: "", displayTime: "" };
     }
 
-    // Se temos data e hora separados
     if (dateStr && timeStr && !item.dataHora && !item.scheduled_at) {
       return {
         displayDate: formatDate(dateStr),
@@ -90,7 +89,6 @@ export default function Dashboard({ schedule }: DashboardProps) {
       };
     }
 
-    // Caso tenhamos um datetime único
     const dateObj = parseDate(combined as string);
     if (!dateObj) {
       return {
@@ -110,7 +108,6 @@ export default function Dashboard({ schedule }: DashboardProps) {
 
   function parseDate(input: string | undefined) {
     if (!input) return undefined;
-    // Normaliza espaço para "T" se vier como "YYYY-MM-DD HH:mm:ss"
     const normalized =
       input.includes(" ") && !input.includes("T")
         ? input.replace(" ", "T")
@@ -120,35 +117,23 @@ export default function Dashboard({ schedule }: DashboardProps) {
   }
 
   function formatDate(d: string) {
-    // d esperado: YYYY-MM-DD
     const parts = d.split("-");
     if (parts.length === 3) return `${parts[2]}/${parts[1]}/${parts[0]}`;
-    // fallback
     const dateObj = parseDate(d);
     return dateObj ? dateObj.toLocaleDateString("pt-BR") : d;
   }
 
   function formatTime(t: string) {
-    // t esperado: HH:mm ou HH:mm:ss
     const [hh, mm] = t.split(":");
-    if (hh && mm) return `${hh}:${mm}`;
-    return t;
+    return hh && mm ? `${hh}:${mm}` : t;
   }
 
   async function handleFinish(id: string) {
     try {
       const apiClient = setupAPIClient();
-      await apiClient.put("/schedule", {
-        schedule_id: id,
-        status: "inactive",
-      });
-
-      const filterItem = list.filter((item) => {
-        return item?.id !== id && item?.status !== "inactive";
-        // item?.id !== id;
-      });
-
-      setList(filterItem);
+      await apiClient.put("/schedule", { schedule_id: id, status: "inactive" });
+      const updated = list.filter((item) => item.id !== id);
+      setList(updated);
       onClose();
     } catch (err) {
       console.log(err);
@@ -162,137 +147,128 @@ export default function Dashboard({ schedule }: DashboardProps) {
   return (
     <>
       <Head>
-        <title>BarberPRO - Minha barbearia</title>
+        <title>BarberPRO - Agenda</title>
       </Head>
+
       <Sidebar>
-        <Flex direction="column" align="flex-start" justify="flex-start">
-          <Flex w="100%" direction="row" align="center" justify="flex-start">
-            <Heading fontSize="3xl" mt={4} mb={4} mr={4}>
-              Agenda
+        <Flex direction="column" w="100%" p={isMobile ? 2 : 6}>
+          {/* Cabeçalho */}
+          <Flex
+            w="100%"
+            align="center"
+            justify="space-between"
+            flexWrap="wrap"
+            mb={6}
+          >
+            <Heading fontSize="3xl" color="whiteAlpha.900">
+              Agendamentos
             </Heading>
             <Button
               as={Link}
               href="/new"
-              bg="button.cta"
-              _hover={{ background: "#FFB13E" }}
+              bgGradient="linear(to-r, orange.400, yellow.400)"
+              color="white"
+              _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
+              shadow="md"
+              px={6}
+              mt={isMobile ? 3 : 0}
             >
-              Registrar
+              + Novo Agendamento
             </Button>
           </Flex>
-          {/* Lista de agendamentos - mostra apenas schedules com status 'active' */}
-          {list.map((item) => {
-            const { displayDate, displayTime } = getDateTime(item);
-            return (
-              <ChakraLink
-              onClick={() => handleOpenModal(item)}
-              key={item?.id}
-              w="100%"
-              m={0}
-              p={0}
-              mt={1}
-              bg="transparent"
-              style={{ textDecoration: "none" }}
-            >
-              <Flex
-                w="100%"
-                direction={isMobile ? "column" : "row"}
-                p={4}
-                rounded={4}
-                mb={2}
-                bg="barber.400"
-                align={isMobile ? "center" : "center"}
-                justifyContent={isMobile ? "center" : "space-between"}
-                textAlign={"center"}
-                gap={isMobile ? 5 : 0}
-              >
-                <Flex
-                  w="100%"
-                  align="center"
-                  justify="space-between"
-                  direction="row"
-                  mb={isMobile ? 2 : 0}
-                >
-                  <Flex align="center">
-                    <IoMdPerson size={30} color="#f1f1f1" />
-                    <Text
-                      fontWeight="bold"
-                      noOfLines={1}
-                      ml={isMobile ? 2 : 4}
-                      textAlign="left"
-                      fontSize="md"
-                    >
-                      {item?.customer}
-                    </Text>
-                  </Flex>
 
-                  <Box ml={0}>
-                    {item.source === "telegram" ? (
-                      <FaTelegram size={24} color="#0088cc" />
-                    ) : (
-                      <FaMobileAlt size={24} color="#f1f1f1" />
-                    )}
-                  </Box>
-                </Flex>
-                <Container
-                  minW="30px"
-                  textAlign="center"
-                  display={{ base: "none", md: "block" }}
-                  >
-                <Flex align="center" justify="center">
-                  <FiScissors size={24} style={{ marginRight: 6 }} />
-                  <Text fontWeight="bold">{item?.haircut?.name}</Text>
-                </Flex>
-              </Container>
-              <Flex display={isMobile ? "none" : "flex"} justify="flex-end">
-                <FiDollarSign  size={24}/>
-              </Flex>
-                <Container
-                  minW="30px"
-                  textAlign="center"
-                  display={{ base: "none", md: "block" }}
+          <Divider borderColor={borderColor} mb={4} />
+
+          {/* Lista */}
+          {list.length === 0 ? (
+            <Text color="whiteAlpha.700" textAlign="center" mt={10}>
+              Nenhum agendamento ativo no momento.
+            </Text>
+          ) : (
+            list.map((item) => {
+              const { displayDate, displayTime } = getDateTime(item);
+
+              return (
+                <ChakraLink
+                  key={item.id}
+                  onClick={() => handleOpenModal(item)}
+                  _hover={{ textDecoration: "none" }}
                 >
-                  <Flex>
-                    <Text fontWeight="bold">R$ {item?.haircut?.price}</Text>
-                  </Flex>
-                </Container>
-                
-                {(displayDate || displayTime) && (
                   <Flex
-                    direction={"column"}
-                    align={isMobile ? "flex-start" : "flex-end"}
+                    bg={cardBg}
+                    _hover={{ bg: hoverBg }}
+                    transition="0.2s"
+                    rounded="xl"
+                    shadow="sm"
+                    p={isMobile ? 4 : 5}
+                    mb={3}
+                    border="1px solid"
+                    borderColor={borderColor}
+                    direction={isMobile ? "column" : "row"}
+                    align="center"
+                    justify="space-between"
+                    gap={isMobile ? 4 : 8}
                   >
-                    {displayDate && (
-                      <Container minW="30px" textAlign="center" display="flex">       
-                  <FiCalendar size={24} style={{ marginRight: 6 }}/>
-                        <Text fontWeight="bold" mb={isMobile ? 0 : 0}>
-                          {displayDate}
+                    {/* Cliente + Origem */}
+                    <Flex align="center" gap={3}>
+                      <Icon as={IoMdPerson} boxSize={6} color="orange.300" />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        color="whiteAlpha.900"
+                      >
+                        {item.customer}
+                      </Text>
+                      <Box>
+                        {item.source === "telegram" ? (
+                          <FaTelegram size={22} color="#0088cc" />
+                        ) : (
+                          <FaMobileAlt size={20} color="#f1f1f1" />
+                        )}
+                      </Box>
+                    </Flex>
+
+                    {/* Corte, Preço e Horário separados */}
+                    <VStack
+                      spacing={2}
+                      align={isMobile ? "center" : "flex-start"}
+                      color="whiteAlpha.800"
+                    >
+                      <Flex align="center" gap={2}>
+                        <Icon as={FiScissors} color="orange.300" />
+                        <Text fontWeight="bold">{item.haircut.name}</Text>
+                      </Flex>
+
+                      <Flex align="center" gap={2}>
+                        <Icon as={FiDollarSign} color="green.400" />
+                        <Text fontWeight="bold">
+                          R$ {item.haircut.price}
                         </Text>
-                      </Container>
-                    )}
-                    {displayTime && (
-                      <Container minW="30px" textAlign="center">
-                        <Text fontWeight="bold">{displayTime}</Text>
-                      </Container>
-                    )}
+                      </Flex>
+
+                      {(displayDate || displayTime) && (
+                        <Flex align="center" gap={2}>
+                          <Icon as={FiCalendar} color="orange.300" />
+                          <Text fontWeight="bold">
+                            {displayDate} {displayTime && `• ${displayTime}`}
+                          </Text>
+                        </Flex>
+                      )}
+                    </VStack>
                   </Flex>
-                )}
-              </Flex>
-            </ChakraLink>
-            );
-          })}
+                </ChakraLink>
+              );
+            })
+          )}
         </Flex>
       </Sidebar>
+
       <ModalInfo
         isOpen={isOpen}
         onOpen={onOpen}
         onClose={onClose}
         data={service}
-        finishService={() => {
-          if (service?.id) {
-            return handleFinish(service.id);
-          }
-          return Promise.resolve();
-        }}
+        finishService={() => service?.id && handleFinish(service.id)}
       />
     </>
   );
