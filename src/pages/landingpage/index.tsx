@@ -176,17 +176,18 @@ export default function SimularAgendamento() {
         align="center"
         justify="flex-start"
         p={4}
+        gap="10"
       >
         <Heading
-  fontSize="3xl"
-  mt={4}
-  mb={4}
-  bgGradient="linear(to-b, orange.400, yellow.400)"
-  bgClip="text"
-  fontWeight="extrabold"
->
-  Solicitar agendamento
-</Heading>
+          fontSize="3xl"
+          mt={4}
+          mb={4}
+          bgGradient="linear(to-b, orange.400, yellow.400)"
+          bgClip="text"
+          fontWeight="extrabold"
+        >
+          Agendamento
+        </Heading>
 
         <Flex
           maxW="700px"
@@ -207,13 +208,13 @@ export default function SimularAgendamento() {
             alignItems="center"
             justifyContent="center"
           >
-            <Image src={logoImg} alt="Logo" width={100} height={100} />
+            <Image src={logoImg} alt="Logo" width={150} height={150} />
           </Flex>
-
-          <Flex>
+          <Flex margin="5">
             <BusinessHoursChip />
           </Flex>
           <Input
+            type="text"
             mt={4}
             mb={3}
             placeholder="Nome"
@@ -229,6 +230,24 @@ export default function SimularAgendamento() {
             size="lg"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
+            isRequired={true}
+          />
+          <Input
+            type="email"
+            mb={3}
+            placeholder="E-mail"
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
+            w="85%"
+            size="lg"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
             isRequired={true}
           />
           <Input

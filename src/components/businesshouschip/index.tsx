@@ -61,9 +61,9 @@ export function BusinessHoursChip() {
   return (
     <HStack
       border="1px solid"
-      borderColor={isOpen ? "green.200" : "gray.200"}
-      bg={isOpen ? "green.50" : "gray.50"}
-      borderRadius="full"
+      borderColor={isOpen ? "green.200" : "red.200"}
+      bg={isOpen ? "green.50" : "red.50"}
+      borderRadius="10px"
       px={4}
       py={2}
       spacing={3}
