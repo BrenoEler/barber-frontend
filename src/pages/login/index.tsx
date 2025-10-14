@@ -62,6 +62,7 @@ export default function Login() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             color="white"
+            _hover={{ bg: "barber.500" }}
           />
 
           <Input
@@ -74,6 +75,7 @@ export default function Login() {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             color="white"
+            _hover={{ bg: "barber.500" }}
           />
 
           <Button

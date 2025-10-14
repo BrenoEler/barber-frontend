@@ -1,5 +1,11 @@
 import type { AppProps } from "next/app";
-import { ChakraProvider, Select } from "@chakra-ui/react";
+import {
+  background,
+  ChakraProvider,
+  color,
+  filter,
+  Select,
+} from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 
 import { AuthProvider } from "../context/AuthContext";
@@ -33,7 +39,17 @@ const colors = {
   },
 };
 
-const theme = extendTheme({ styles, colors });
+const customTime = {
+  field: {
+    background: "#1b1c29",
+    "::-webkit-calendar-picker-indicator": {
+      filter:
+        "invert(40%) sepia(87%) saturate(2960%) hue-rotate(200deg) brightness(95%) contrast(101%)",
+    },
+  },
+};
+
+const theme = extendTheme({ styles, colors, customTime });
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (

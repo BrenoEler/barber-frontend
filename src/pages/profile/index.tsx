@@ -208,6 +208,27 @@ export default function Profile({ user, premium }: ProfileProps) {
                   </Flex>
                 </Flex>
               )}
+
+              <Text mb={2} fontSize="xl" fontWeight="bold" color="white">
+                Horario de funcionamento:
+              </Text>
+
+              <Flex direction={"row"} w="100%" mb={3} gap={2}>
+                <Input
+                  width="50%"
+                  placeholder="De"
+                  type="time"
+                  variant="customTime"
+                ></Input>
+                <Text mt={2}>X</Text>
+                <Input
+                  width="50%"
+                  placeholder="Ate"
+                  type="time"
+                  variant="customTime"
+                ></Input>
+              </Flex>
+
               <Text mb={2} fontSize="xl" fontWeight="bold" color="white">
                 Plano Atual:
               </Text>

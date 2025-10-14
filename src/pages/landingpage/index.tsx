@@ -1,9 +1,18 @@
 import { useState, ChangeEvent, useEffect } from "react";
 import Head from "next/head";
-import { Flex, Heading, Button, Input, Select, Text } from "@chakra-ui/react";
+import {
+  Flex,
+  Heading,
+  Button,
+  Input,
+  Select,
+  Text,
+  Avatar,
+} from "@chakra-ui/react";
 // Página pública: não usa Sidebar autenticado
 import { toast } from "sonner";
 import Image from "next/image";
+import { BusinessHoursChip } from "../../components/businesshouschip";
 
 export default function SimularAgendamento() {
   // Valores estáticos solicitados
@@ -188,6 +197,9 @@ export default function SimularAgendamento() {
             <Image src={logoImg} alt="Logo" width={100} height={100} />
           </Flex>
 
+          <Flex>
+            <BusinessHoursChip />
+          </Flex>
           <Input
             mt={4}
             mb={3}
@@ -199,7 +211,6 @@ export default function SimularAgendamento() {
             onChange={(e) => setNome(e.target.value)}
             isRequired={true}
           />
-
           <Input
             placeholder="(27) 99999-9999"
             w="85%"
@@ -210,7 +221,6 @@ export default function SimularAgendamento() {
             value={celular}
             onChange={handerChanger}
           />
-
           <Input
             type="date"
             w="85%"
@@ -220,7 +230,6 @@ export default function SimularAgendamento() {
             value={data}
             onChange={(e) => setData(e.target.value)}
           />
-
           <Input
             type="time"
             w="85%"
@@ -230,7 +239,6 @@ export default function SimularAgendamento() {
             value={horario}
             onChange={(e) => setHorario(e.target.value)}
           />
-
           <Select
             bg="barber.900"
             color="white"

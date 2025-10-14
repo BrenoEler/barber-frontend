@@ -63,6 +63,7 @@ export default function Register() {
             value={name}
             onChange={(e) => setName(e.target.value)}
             color="white"
+            _hover={{ bg: "barber.500" }}
           />
 
           <Input
@@ -75,6 +76,7 @@ export default function Register() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             color="white"
+            _hover={{ bg: "barber.500" }}
           />
 
           <Input
@@ -82,11 +84,12 @@ export default function Register() {
             variant="filled"
             size="lg"
             placeholder="********"
-            type="text"
+            type="password"
             mb={6}
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             color="white"
+            _hover={{ bg: "barber.500" }}
           />
 
           <Button
