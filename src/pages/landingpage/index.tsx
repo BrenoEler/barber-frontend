@@ -12,6 +12,7 @@ import {
 // Página pública: não usa Sidebar autenticado
 import { toast } from "sonner";
 import Image from "next/image";
+import { useColorModeValue } from "@chakra-ui/react";
 import { BusinessHoursChip } from "../../components/businesshouschip";
 
 export default function SimularAgendamento() {
@@ -158,6 +159,10 @@ export default function SimularAgendamento() {
 
   console.log(formatarCelular("27981235799"));
 
+    const cardBg = useColorModeValue("barber.400", "gray.800");
+    const hoverBg = useColorModeValue("whiteAlpha.300", "gray.700");
+    const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
+
   return (
     <>
       <Head>
@@ -172,9 +177,16 @@ export default function SimularAgendamento() {
         justify="flex-start"
         p={4}
       >
-        <Heading fontSize="3xl" mt={4} mb={4}>
-          Solicitar agendamento
-        </Heading>
+        <Heading
+  fontSize="3xl"
+  mt={4}
+  mb={4}
+  bgGradient="linear(to-b, orange.400, yellow.400)"
+  bgClip="text"
+  fontWeight="extrabold"
+>
+  Solicitar agendamento
+</Heading>
 
         <Flex
           maxW="700px"
@@ -182,9 +194,10 @@ export default function SimularAgendamento() {
           pb={8}
           width="100%"
           direction="column"
+          borderRadius="3xl"
           align="center"
           justify="center"
-          bg="barber.400"
+          bgGradient="linear(to-b, barber.900, barber.400)"
         >
           <Flex
             w="50"
@@ -204,9 +217,16 @@ export default function SimularAgendamento() {
             mt={4}
             mb={3}
             placeholder="Nome"
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
             w="85%"
             size="lg"
-            bg="barber.900"
             value={nome}
             onChange={(e) => setNome(e.target.value)}
             isRequired={true}
@@ -215,8 +235,15 @@ export default function SimularAgendamento() {
             placeholder="(27) 99999-9999"
             w="85%"
             mb={3}
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
             size="lg"
-            bg="barber.900"
             type="tel"
             value={celular}
             onChange={handerChanger}
@@ -225,8 +252,15 @@ export default function SimularAgendamento() {
             type="date"
             w="85%"
             mb={3}
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
             size="lg"
-            bg="barber.900"
             value={data}
             onChange={(e) => setData(e.target.value)}
           />
@@ -235,14 +269,28 @@ export default function SimularAgendamento() {
             w="85%"
             mb={3}
             size="lg"
-            bg="barber.900"
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
             value={horario}
             onChange={(e) => setHorario(e.target.value)}
           />
           <Select
-            bg="barber.900"
             color="white"
             mb={3}
+            _hover={{
+            borderColor: "white",
+            bg: "barber.900"}}
+            _focus={{ 
+            borderColor: "white",
+            bg: "barber.900"}}
+            borderColor="barber.900"
+            bg="barber.400"
             size="lg"
             w="85%"
             placeholder={
@@ -285,19 +333,30 @@ export default function SimularAgendamento() {
             w="85%"
             size="lg"
             color="gray.900"
-            bg="button.cta"
-            _hover={{ bg: "#FFb13e" }}
+            bgGradient="linear(to-r, orange.400, yellow.400)"
+            _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
             onClick={handleSubmit}
             loadingText="Enviando..."
             isLoading={isLoading}
           >
-            Solicitar
+            Solicitar Agendamento
           </Button>
-          <Text mb={4} w="85%" color="red" fontSize="2xl" margin={4}>
-            Atenção seu agendamento não sera aceito de imediato, o barbeiro terá
-            que aprovar o agendamento! Caso aprovado ou reprovado, a devolutiva
-            será enviada whatsapp.
-          </Text>
+          <Text
+          mb={4}
+          w="85%"
+          color="red.900"
+          fontSize="1xl"
+          margin={4}
+          border="2px solid"
+          borderColor="red.500"
+          bg="red.400"
+          borderRadius="md"
+          p={3}
+        >
+          Atenção! ⚠ <br></br> Seu agendamento não será aceito de imediato, o barbeiro terá
+          que aprovar o agendamento. Caso aprovado ou reprovado, a devolutiva
+          será enviada via WhatsApp.
+        </Text>
         </Flex>
       </Flex>
     </>

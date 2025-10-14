@@ -144,6 +144,23 @@ export default function Dashboard({ schedule }: DashboardProps) {
     }
   }
 
+  async function handleDelete(scheduleId: string) {
+    try {
+      const apiClient = setupAPIClient();
+
+      await apiClient.delete("/schedule/delete", { data: { id: scheduleId } });
+
+      setList(prev => prev.filter(item => item.id !== scheduleId));
+
+      import("sonner").then(({ toast }) => toast.success("Agendamento deletado!"));
+    } catch (err) {
+      console.log("Erro ao deletar:", err);
+      import("sonner").then(({ toast }) =>
+        toast.error("Erro ao deletar agendamento.")
+      );
+    }
+  }
+
   return (
     <>
       <Head>
@@ -195,65 +212,71 @@ export default function Dashboard({ schedule }: DashboardProps) {
                   _hover={{ textDecoration: "none" }}
                 >
                   <Flex
-                    bg={cardBg}
-                    _hover={{ bg: hoverBg }}
-                    transition="0.2s"
-                    rounded="xl"
-                    shadow="sm"
-                    p={isMobile ? 4 : 5}
-                    mb={3}
-                    border="1px solid"
-                    borderColor={borderColor}
-                    direction={isMobile ? "column" : "row"}
-                    align="center"
-                    justify="space-between"
-                    gap={isMobile ? 4 : 8}
-                  >
-                    {/* Cliente + Origem */}
-                    <Flex align="center" gap={3}>
-                      <Icon as={IoMdPerson} boxSize={6} color="orange.300" />
-                      <Text
-                        fontWeight="bold"
-                        fontSize="lg"
-                        color="whiteAlpha.900"
-                      >
-                        {item.customer}
-                      </Text>
-                      <Box>
-                        {item.source === "telegram" ? (
-                          <FaTelegram size={22} color="#0088cc" />
-                        ) : (
-                          <FaMobileAlt size={20} color="#f1f1f1" />
-                        )}
-                      </Box>
+                  key={item.id}
+                  bg={cardBg}
+                  _hover={{ bg: hoverBg }}
+                  transition="0.2s"
+                  rounded="xl"
+                  shadow="sm"
+                  p={isMobile ? 4 : 5}
+                  mb={3}
+                  border="1px solid"
+                  borderColor={borderColor}
+                  direction={isMobile ? "column" : "row"}
+                  align="center"
+                  justify="space-between"
+                  gap={isMobile ? 4 : 8}
+                >
+                  {/* Cliente + Origem */}
+                  <Flex align="center" gap={3}>
+                    <Icon as={IoMdPerson} boxSize={6} color="orange.300" />
+                    <Text fontWeight="bold" fontSize="lg" color="whiteAlpha.900">
+                      {item.customer}
+                    </Text>
+                    <Box>
+                      {item.source === "telegram" ? (
+                        <FaTelegram size={22} color="#0088cc" />
+                      ) : (
+                        <FaMobileAlt size={20} color="#f1f1f1" />
+                      )}
+                    </Box>
+                  </Flex>
+
+                  {/* Corte, Preço e Horário separados */}
+                  <VStack spacing={2} align={isMobile ? "center" : "flex-start"} color="whiteAlpha.800">
+                    <Flex align="center" gap={2}>
+                      <Icon as={FiScissors} color="orange.300" />
+                      <Text fontWeight="bold">{item.haircut.name}</Text>
                     </Flex>
 
-                    {/* Corte, Preço e Horário separados */}
-                    <VStack
-                      spacing={2}
-                      align={isMobile ? "center" : "flex-start"}
-                      color="whiteAlpha.800"
-                    >
-                      <Flex align="center" gap={2}>
-                        <Icon as={FiScissors} color="orange.300" />
-                        <Text fontWeight="bold">{item.haircut.name}</Text>
-                      </Flex>
+                    <Flex align="center" gap={2}>
+                      <Icon as={FiDollarSign} color="green.400" />
+                      <Text fontWeight="bold">R$ {item.haircut.price}</Text>
+                    </Flex>
 
+                    {(displayDate || displayTime) && (
                       <Flex align="center" gap={2}>
-                        <Icon as={FiDollarSign} color="green.400" />
+                        <Icon as={FiCalendar} color="orange.300" />
                         <Text fontWeight="bold">
-                          R$ {item.haircut.price}
+                          {displayDate} {displayTime && `• ${displayTime}`}
                         </Text>
                       </Flex>
-
-                      {(displayDate || displayTime) && (
-                        <Flex align="center" gap={2}>
-                          <Icon as={FiCalendar} color="orange.300" />
-                          <Text fontWeight="bold">
-                            {displayDate} {displayTime && `• ${displayTime}`}
-                          </Text>
-                        </Flex>
-                      )}
+                    )}
+                    {/* Botão de deletar */}
+                    <Flex align="center" justify="flex-end" gap={2} w="100%">
+                        <Button
+                          size="sm"
+                          colorScheme="red"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            if (confirm("Tem certeza que quer deletar este agendamento?")) {
+                              handleDelete(item.id); 
+                            }
+                          }}
+                        >
+                          Deletar
+                        </Button>
+                      </Flex>
                     </VStack>
                   </Flex>
                 </ChakraLink>
