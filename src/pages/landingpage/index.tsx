@@ -7,7 +7,7 @@ export default function SimularAgendamentoPage() {
       <Head>
         <title>Solicitar agendamento</title>
       </Head>
-        <AgendamentoForm />
+      <AgendamentoForm />
     </>
   );
 }

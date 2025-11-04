@@ -192,7 +192,7 @@ export default function Profile({ user, premium }: ProfileProps) {
                       Editar Landing Page
                     </Text>
 
-                    <Link href="/editarlandingpage">
+                    <Link href="/editlandingpage">
                       <Box
                         cursor="pointer"
                         p={1}

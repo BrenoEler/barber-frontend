@@ -24,6 +24,7 @@ import {
   FiCreditCard,
   FiHelpCircle,
 } from "react-icons/fi";
+import { IoPersonAdd } from "react-icons/io5";
 
 import { IconType } from "react-icons";
 import { FaUserCog } from "react-icons/fa";
@@ -42,6 +43,7 @@ const LinkItems: Array<LinkItemProps> = [
   { name: "Caixa", icon: FiCreditCard, route: "/cashier" },
   { name: "Suporte", icon: FiHelpCircle, route: "/support" },
   { name: "Minha Conta", icon: FaUserCog, route: "/profile" },
+  { name: "Clientes", icon: IoPersonAdd, route: "/clientes" },
 ];
 
 export function Sidebar({ children }: { children: ReactNode }) {

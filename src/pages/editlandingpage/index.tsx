@@ -22,11 +22,11 @@ import {
   Grid,
   Badge,
   Icon,
-  useColorModeValue,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Head from "next/head";
 import { FaClock } from "react-icons/fa";
+import { HiUpload } from "react-icons/hi";
 
 const valoresPadrao = {
   titulo: "Agendamento",
@@ -56,7 +56,7 @@ const valoresPadrao = {
 // Componente BusinessHoursChip
 function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   const schedule: any = {};
-  
+
   // Mapeia os horários configurados para o formato esperado
   const diasMap: any = {
     "Segunda-feira": 1,
@@ -64,8 +64,8 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
     "Quarta-feira": 3,
     "Quinta-feira": 4,
     "Sexta-feira": 5,
-    "Sábado": 6,
-    "Domingo": 0,
+    Sábado: 6,
+    Domingo: 0,
   };
 
   horarios.forEach((h) => {
@@ -124,7 +124,7 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   const getHoursText = () => {
     const diasAtivos = horarios.filter((h) => h.ativo);
     if (diasAtivos.length === 0) return "Sem horários definidos";
-    
+
     // Agrupa dias com mesmo horário
     const grupos: any = {};
     diasAtivos.forEach((h) => {
@@ -139,11 +139,14 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
         if (dias.length === 1) {
           return `${dias[0].slice(0, 3)}: ${inicio} - ${fim}`;
         }
-        return `${dias[0].slice(0, 3)} - ${dias[dias.length - 1].slice(0, 3)}: ${inicio} - ${fim}`;
+        return `${dias[0].slice(0, 3)} - ${dias[dias.length - 1].slice(
+          0,
+          3
+        )}: ${inicio} - ${fim}`;
       })
       .join(" | ");
   };
-  
+
   return (
     <HStack
       border="1px solid"
@@ -192,7 +195,7 @@ export default function EditarLandingPage() {
   // Configurações editáveis
   const [titulo, setTitulo] = useState("Agendamento");
   const [logoImg, setLogoImg] = useState("/images/logo.svg");
-  
+
   const [horarios, setHorarios] = useState([
     { dia: "Segunda-feira", inicio: "09:00", fim: "18:00", ativo: true },
     { dia: "Terça-feira", inicio: "09:00", fim: "18:00", ativo: true },
@@ -231,7 +234,7 @@ export default function EditarLandingPage() {
     return valor;
   }
 
-    const handleReset = () => {
+  const handleReset = () => {
     setTitulo(valoresPadrao.titulo);
     setLogoImg(valoresPadrao.logoImg);
     setHorarios(valoresPadrao.horarios);
@@ -239,15 +242,14 @@ export default function EditarLandingPage() {
     setExibirAviso(valoresPadrao.exibirAviso);
 
     toast({
-        title: "Configurações resetadas!",
-        description: "As configurações voltaram ao padrão original.",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
+      title: "Configurações resetadas!",
+      description: "As configurações voltaram ao padrão original.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+      position: "top-right",
     });
-    };
-
+  };
 
   function handerChanger(e: React.ChangeEvent<HTMLInputElement>) {
     setCelular(formatarCelular(e.target.value));
@@ -363,7 +365,7 @@ export default function EditarLandingPage() {
           >
             <Image src={logoImg} alt="Logo" width={150} height={150} />
           </Flex>
-          
+
           <Flex margin="5">
             <BusinessHoursChip horarios={horarios} />
           </Flex>
@@ -568,6 +570,15 @@ export default function EditarLandingPage() {
               <Tab fontSize="xs">Básico</Tab>
               <Tab fontSize="xs">Horários</Tab>
             </TabList>
+            {/* <FileUpload>
+              <FileUpload.HiddenInput />
+              <FileUpload.Trigger asChild>
+                <Button variant="outline" size="sm">
+                  <HiUpload /> Upload file
+                </Button>
+              </FileUpload.Trigger>
+              <FileUpload.List />
+            </FileUpload> */}
 
             <TabPanels>
               {/* Tab 1: Informações Básicas */}
@@ -624,7 +635,12 @@ export default function EditarLandingPage() {
 
               {/* Tab 2: Horários */}
               <TabPanel>
-                <VStack spacing={3} align="stretch" maxH="500px" overflowY="auto">
+                <VStack
+                  spacing={3}
+                  align="stretch"
+                  maxH="500px"
+                  overflowY="auto"
+                >
                   <Text color="gray.300" fontSize="xs" mb={2}>
                     Configure os dias e horários de funcionamento
                   </Text>
@@ -646,7 +662,11 @@ export default function EditarLandingPage() {
                           colorScheme="green"
                           isChecked={horario.ativo}
                           onChange={(e) =>
-                            handleUpdateHorario(index, "ativo", e.target.checked)
+                            handleUpdateHorario(
+                              index,
+                              "ativo",
+                              e.target.checked
+                            )
                           }
                         />
                       </HStack>
@@ -660,7 +680,11 @@ export default function EditarLandingPage() {
                               type="time"
                               value={horario.inicio}
                               onChange={(e) =>
-                                handleUpdateHorario(index, "inicio", e.target.value)
+                                handleUpdateHorario(
+                                  index,
+                                  "inicio",
+                                  e.target.value
+                                )
                               }
                               bg="gray.800"
                               borderColor="gray.600"
@@ -676,7 +700,11 @@ export default function EditarLandingPage() {
                               type="time"
                               value={horario.fim}
                               onChange={(e) =>
-                                handleUpdateHorario(index, "fim", e.target.value)
+                                handleUpdateHorario(
+                                  index,
+                                  "fim",
+                                  e.target.value
+                                )
                               }
                               bg="gray.800"
                               borderColor="gray.600"
@@ -715,17 +743,17 @@ export default function EditarLandingPage() {
             >
               Salvar Alterações
             </Button>
-              <Button
-                size="sm"
-                variant="outline"
-                colorScheme="red"
-                onClick={handleReset}
+            <Button
+              size="sm"
+              variant="outline"
+              colorScheme="red"
+              onClick={handleReset}
             >
-                Resetar Página
+              Resetar Página
             </Button>
           </HStack>
         </Flex>
-        
+
         {/* Preview em Tempo Real */}
         <Box display={{ base: "none", lg: "block" }}>
           <PreviewLandingPage />

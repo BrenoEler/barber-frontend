@@ -131,8 +131,16 @@ export default function Dashboard({ schedule }: DashboardProps) {
   async function handleFinish(id: string) {
     try {
       const apiClient = setupAPIClient();
-      await apiClient.put("/schedule", { schedule_id: id, status: "inactive" });
+
+      const originalId = id.replace("app-", "").replace("telegram-", "");
+      console.log(originalId);
+      await apiClient.put("/schedule", {
+        schedule_id: originalId,
+        status: "inactive",
+      });
+
       const updated = list.filter((item) => item.id !== id);
+      console.log(updated);
       setList(updated);
       onClose();
     } catch (err) {
@@ -150,9 +158,11 @@ export default function Dashboard({ schedule }: DashboardProps) {
 
       await apiClient.delete("/schedule/delete", { data: { id: scheduleId } });
 
-      setList(prev => prev.filter(item => item.id !== scheduleId));
+      setList((prev) => prev.filter((item) => item.id !== scheduleId));
 
-      import("sonner").then(({ toast }) => toast.success("Agendamento deletado!"));
+      import("sonner").then(({ toast }) =>
+        toast.success("Agendamento deletado!")
+      );
     } catch (err) {
       console.log("Erro ao deletar:", err);
       import("sonner").then(({ toast }) =>
@@ -190,7 +200,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
               px={6}
               mt={isMobile ? 3 : 0}
             >
-              + Novo Agendamento
+              Novo Agendamento
             </Button>
           </Flex>
 
@@ -212,65 +222,77 @@ export default function Dashboard({ schedule }: DashboardProps) {
                   _hover={{ textDecoration: "none" }}
                 >
                   <Flex
-                  key={item.id}
-                  bg={cardBg}
-                  _hover={{ bg: hoverBg }}
-                  transition="0.2s"
-                  rounded="xl"
-                  shadow="sm"
-                  p={isMobile ? 4 : 5}
-                  mb={3}
-                  border="1px solid"
-                  borderColor={borderColor}
-                  direction={isMobile ? "column" : "row"}
-                  align="center"
-                  justify="space-between"
-                  gap={isMobile ? 4 : 8}
-                >
-                  {/* Cliente + Origem */}
-                  <Flex align="center" gap={3}>
-                    <Icon as={IoMdPerson} boxSize={6} color="orange.300" />
-                    <Text fontWeight="bold" fontSize="lg" color="whiteAlpha.900">
-                      {item.customer}
-                    </Text>
-                    <Box>
-                      {item.source === "telegram" ? (
-                        <FaTelegram size={22} color="#0088cc" />
-                      ) : (
-                        <FaMobileAlt size={20} color="#f1f1f1" />
-                      )}
-                    </Box>
-                  </Flex>
-
-                  {/* Corte, Preço e Horário separados */}
-                  <VStack spacing={2} align={isMobile ? "center" : "flex-start"} color="whiteAlpha.800">
-                    <Flex align="center" gap={2}>
-                      <Icon as={FiScissors} color="orange.300" />
-                      <Text fontWeight="bold">{item.haircut.name}</Text>
+                    key={item.id}
+                    bg={cardBg}
+                    _hover={{ bg: hoverBg }}
+                    transition="0.2s"
+                    rounded="xl"
+                    shadow="sm"
+                    p={isMobile ? 4 : 5}
+                    mb={3}
+                    border="1px solid"
+                    borderColor={borderColor}
+                    direction={isMobile ? "column" : "row"}
+                    align="center"
+                    justify="space-between"
+                    gap={isMobile ? 4 : 8}
+                  >
+                    {/* Cliente + Origem */}
+                    <Flex align="center" gap={3}>
+                      <Icon as={IoMdPerson} boxSize={6} color="orange.300" />
+                      <Text
+                        fontWeight="bold"
+                        fontSize="lg"
+                        color="whiteAlpha.900"
+                      >
+                        {item.customer}
+                      </Text>
+                      <Box>
+                        {item.source === "telegram" ? (
+                          <FaTelegram size={22} color="#0088cc" />
+                        ) : (
+                          <FaMobileAlt size={20} color="#f1f1f1" />
+                        )}
+                      </Box>
                     </Flex>
 
-                    <Flex align="center" gap={2}>
-                      <Icon as={FiDollarSign} color="green.400" />
-                      <Text fontWeight="bold">R$ {item.haircut.price}</Text>
-                    </Flex>
-
-                    {(displayDate || displayTime) && (
+                    {/* Corte, Preço e Horário separados */}
+                    <VStack
+                      spacing={2}
+                      align={isMobile ? "center" : "flex-start"}
+                      color="whiteAlpha.800"
+                    >
                       <Flex align="center" gap={2}>
-                        <Icon as={FiCalendar} color="orange.300" />
-                        <Text fontWeight="bold">
-                          {displayDate} {displayTime && `• ${displayTime}`}
-                        </Text>
+                        <Icon as={FiScissors} color="orange.300" />
+                        <Text fontWeight="bold">{item.haircut.name}</Text>
                       </Flex>
-                    )}
-                    {/* Botão de deletar */}
-                    <Flex align="center" justify="flex-end" gap={2} w="100%">
+
+                      <Flex align="center" gap={2}>
+                        <Icon as={FiDollarSign} color="green.400" />
+                        <Text fontWeight="bold">R$ {item.haircut.price}</Text>
+                      </Flex>
+
+                      {(displayDate || displayTime) && (
+                        <Flex align="center" gap={2}>
+                          <Icon as={FiCalendar} color="orange.300" />
+                          <Text fontWeight="bold">
+                            {displayDate} {displayTime && `• ${displayTime}`}
+                          </Text>
+                        </Flex>
+                      )}
+                      {/* Botão de deletar */}
+                      <Flex align="center" justify="flex-end" gap={2} w="100%">
                         <Button
                           size="sm"
                           colorScheme="red"
                           onClick={(e) => {
                             e.stopPropagation();
-                            if (confirm("Tem certeza que quer deletar este agendamento?")) {
-                              handleDelete(item.id); 
+                            if (
+                              confirm(
+                                "Tem certeza que quer deletar este agendamento?"
+                              )
+                            ) {
+                              handleDelete(item.id);
                             }
                           }}
                         >
@@ -316,37 +338,44 @@ export const getServerSideProps = canSSRAuth(async (ctx) => {
       (item: TelegramScheduleItem) => item.status === "accepted"
     );
 
-    const normalizedApp: ScheduleItem[] = activeSchedules.map((item: ScheduleItem) => ({
-      id: item.id,
-      customer: item.customer || "Cliente",
-      haircut: {
-        id: item.haircut?.id,
-        name: item.haircut?.name,
-        price: item.haircut?.price,
-      },
-      scheduled_at: item.dataHora,
-      status: item.status,
-      source: "app",
-    }));
+    const normalizedApp: ScheduleItem[] = activeSchedules.map(
+      (item: ScheduleItem) => ({
+        id: `app-${item.id}`,
+        customer: item.customer || "Cliente",
+        haircut: {
+          id: item.haircut?.id,
+          name: item.haircut?.name,
+          price: item.haircut?.price,
+        },
+        scheduled_at: item.dataHora,
+        status: item.status,
+        source: "app",
+      })
+    );
 
-    const normalizedTelegram: TelegramScheduleItem[] = activeTelegram.map((item: TelegramScheduleItem) => ({
-      id: item.id,
-      customer: item.customerName || "Cliente Telegram",
-      haircut: {
-        id: "telegram",
-        name: item.haircut?.name,
-        price: item.haircut?.price,
-      },
-      scheduled_at: item.scheduledAt,
-      status: item.status,
-      source: "telegram",
-    }));
+    const normalizedTelegram: TelegramScheduleItem[] = activeTelegram.map(
+      (item: TelegramScheduleItem) => ({
+        id: `telegram-${item.id}`,
+        customer: item.customerName || "Cliente Telegram",
+        haircut: {
+          id: "telegram",
+          name: item.haircut?.name,
+          price: item.haircut?.price,
+        },
+        scheduled_at: item.scheduledAt,
+        status: item.status,
+        source: "telegram",
+      })
+    );
 
-    const unified: ScheduleItem[] = [...normalizedApp, ...normalizedTelegram].sort(
-      (a, b) => 
+    const unified: ScheduleItem[] = [
+      ...normalizedApp,
+      ...normalizedTelegram,
+    ].sort(
+      (a, b) =>
         new Date(a.scheduled_at).getTime() - new Date(b.scheduled_at).getTime()
     );
-    
+
     return {
       props: {
         schedule: unified,
