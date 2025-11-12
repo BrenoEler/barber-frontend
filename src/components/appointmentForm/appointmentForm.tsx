@@ -6,14 +6,16 @@ import {
   Input,
   Select,
   Text,
-  useColorModeValue,
+  IconButton,
 } from "@chakra-ui/react";
+import { FaWhatsapp, FaInstagram, FaFacebook } from "react-icons/fa";
+import Link from "next/link";
 import Image from "next/image";
 import { toast } from "sonner";
 import Head from "next/head";
 import { BusinessHoursChip } from "../businesshouschip";
 
-export function AgendamentoForm() {
+export default function LandingPage() {
   const [nome, setNome] = useState("");
   const [email, setEmail] = useState("");
   const [celular, setCelular] = useState("");
@@ -22,16 +24,20 @@ export function AgendamentoForm() {
   const [horario, setHorario] = useState("14:30");
   const [userId, setUserId] = useState("");
   const [haircuts, setHaircuts] = useState([]);
-  const [haircutId, setHaircutId] = useState<string>(
-    "3954661d-a2ec-427f-a3eb-5404f6c97ca6"
-  );
-
+  const [logo, setLogo] = useState("/images/logo.svg");
+  const [haircutId, setHaircutId] = useState<string>("");
   const [loadingCuts, setLoadingCuts] = useState(false);
   const [cutsError, setCutsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
 
+  // Redes sociais
+  const [whatsapp, setWhatsapp] = useState("");
+  const [instagram, setInstagram] = useState("");
+  const [facebook, setFacebook] = useState("");
+
   const apiBase = process.env.NEXT_PUBLIC_API_URL || "http://localhost:3333";
 
+  // 📱 Formata o número de celular
   function formatarCelular(valor: string) {
     valor = valor.replace(/\D/g, "");
     if (valor.length > 10) {
@@ -39,9 +45,7 @@ export function AgendamentoForm() {
     } else if (valor.length > 6) {
       valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
     } else if (valor.length > 2) {
-      valor = valor.replace(/^(\d{2}) (\d{0,5})/, "($1) $2");
-    } else {
-      valor = valor.replace(/^(\d*)/, "$1");
+      valor = valor.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
     }
     return valor;
   }
@@ -50,10 +54,10 @@ export function AgendamentoForm() {
     setCelular(formatarCelular(e.target.value));
   }
 
+  // Busca cortes e dados da landing
   useEffect(() => {
     async function fetchCuts() {
       setLoadingCuts(true);
-      setCutsError(null);
       try {
         const url = new URL("/haircuts", apiBase);
         url.searchParams.set("status", "true");
@@ -61,39 +65,31 @@ export function AgendamentoForm() {
         const data = await res.json();
         const list = Array.isArray(data) ? data : [];
         const mapped = list.map((i: any) => ({ id: i.id, name: i.name }));
-        const hasSelected = mapped.some((i: any) => i.id === haircutId);
-        const finalList =
-          hasSelected || !haircutId
-            ? mapped
-            : [{ id: haircutId, name: "Corte selecionado" }, ...mapped];
-        setHaircuts(finalList);
-        if ((!haircutId || String(haircutId).trim() === "") && finalList.length > 0) {
-          setHaircutId(finalList[0].id);
+        setHaircuts(mapped);
+        if (!haircutId && mapped.length > 0) {
+          setHaircutId(mapped[0].id);
         }
-      } catch (e) {
+      } catch {
         setCutsError("Não foi possível carregar os cortes.");
         setHaircuts([]);
       } finally {
         setLoadingCuts(false);
       }
     }
+    
     fetchCuts();
-  }, []);
+  }, [apiBase, haircutId]);
 
+  // Envia o formulário
   async function handleSubmit() {
-    if (String(haircutId).trim() === "" && haircuts.length > 0) {
-      setHaircutId(haircuts[0].id);
-    }
-
     const missing: string[] = [];
-    if (String(chatId).trim() === "") missing.push("chatId");
-    if (nome.trim() === "") missing.push("nome");
-    if (email.trim() === "") missing.push("email");
-    if (celular.trim() === "") missing.push("telefone");
-    if (data.trim() === "") missing.push("data");
-    if (horario.trim() === "") missing.push("horário");
-    if (userId.trim() === "") missing.push("user_id");
-    if (String(haircutId).trim() === "") missing.push("haircutId");
+    if (!chatId) missing.push("chatId");
+    if (!nome) missing.push("nome");
+    if (!email) missing.push("email");
+    if (!celular) missing.push("telefone");
+    if (!data) missing.push("data");
+    if (!horario) missing.push("horário");
+    if (!haircutId) missing.push("haircutId");
 
     if (missing.length > 0) {
       toast.error(`Preencha: ${missing.join(", ")}`);
@@ -117,24 +113,22 @@ export function AgendamentoForm() {
           haircutId: haircutId,
         }),
       });
-      if (!res.ok) throw new Error("Request failed");
+
+      if (!res.ok) throw new Error("Falha no envio");
 
       toast.success("Solicitação enviada!");
       setNome("");
       setEmail("");
       setCelular("");
-      setChatId("");
       setData("");
       setHorario("");
       setHaircutId("");
-    } catch (err) {
+    } catch {
       toast.error("Erro ao enviar solicitação.");
     } finally {
       setIsLoading(false);
     }
   }
-
-  const logoImg = "/images/logo.svg";
 
   const inputHover = {
     borderColor: "white",
@@ -145,7 +139,7 @@ export function AgendamentoForm() {
     borderColor: "barber.900",
     bg: "barber.400",
     w: "85%",
-    size: "lg",
+    size: "lg" as const,
     _hover: inputHover,
     _focus: inputHover,
     mb: 3,
@@ -189,7 +183,7 @@ export function AgendamentoForm() {
           bgGradient="linear(to-b, barber.900, barber.400)"
         >
           <Flex w="50" h="50" pb={6} rounded="full" align="center" justify="center">
-            <Image src={logoImg} alt="Logo" width={150} height={150} />
+            <Image src={logo} alt="Logo" width={150} height={150} />
           </Flex>
 
           <Flex mb={4}>
@@ -289,9 +283,84 @@ export function AgendamentoForm() {
             p={3}
           >
             Atenção! ⚠ <br />
-            Seu agendamento não será aceito de imediato. O barbeiro terá que
-            aprovar o agendamento. A devolutiva será enviada via WhatsApp.
+            Seu agendamento não será aceito de imediato. O barbeiro precisa aprovar o
+            agendamento. A devolutiva será enviada via WhatsApp.
           </Text>
+
+          <Flex
+            mt={6}
+            gap={4}
+            justify="center"
+            align="center"
+            w="85%"
+            flexWrap="wrap"
+          >
+            {whatsapp && (
+              <Link
+                href={
+                  whatsapp.startsWith("http")
+                    ? whatsapp
+                    : `https://wa.me/${whatsapp.replace(/\D/g, "")}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <IconButton
+                  aria-label="WhatsApp"
+                  icon={<FaWhatsapp />}
+                  size="lg"
+                  colorScheme="green"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+
+            {instagram && (
+              <Link
+                href={
+                  instagram.startsWith("http")
+                    ? instagram
+                    : `https://instagram.com/${instagram.replace("@", "")}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <IconButton
+                  aria-label="Instagram"
+                  icon={<FaInstagram />}
+                  size="lg"
+                  colorScheme="pink"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+
+            {facebook && (
+              <Link
+                href={
+                  facebook.startsWith("http")
+                    ? facebook
+                    : `https://facebook.com/${facebook}`
+                }
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <IconButton
+                  aria-label="Facebook"
+                  icon={<FaFacebook />}
+                  size="lg"
+                  colorScheme="blue"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+          </Flex>
         </Flex>
       </Flex>
     </>

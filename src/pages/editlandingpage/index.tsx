@@ -22,11 +22,13 @@ import {
   Grid,
   Badge,
   Icon,
+  Link,
+  IconButton,
   useColorModeValue,
 } from "@chakra-ui/react";
 import Image from "next/image";
 import Head from "next/head";
-import { FaClock } from "react-icons/fa";
+import { FaInstagram, FaFacebook, FaWhatsapp, FaClock } from "react-icons/fa";
 
 const valoresPadrao = {
   titulo: "Agendamento",
@@ -56,7 +58,7 @@ const valoresPadrao = {
 // Componente BusinessHoursChip
 function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   const schedule: any = {};
-  
+
   // Mapeia os horários configurados para o formato esperado
   const diasMap: any = {
     "Segunda-feira": 1,
@@ -64,8 +66,8 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
     "Quarta-feira": 3,
     "Quinta-feira": 4,
     "Sexta-feira": 5,
-    "Sábado": 6,
-    "Domingo": 0,
+    Sábado: 6,
+    Domingo: 0,
   };
 
   horarios.forEach((h) => {
@@ -124,7 +126,7 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   const getHoursText = () => {
     const diasAtivos = horarios.filter((h) => h.ativo);
     if (diasAtivos.length === 0) return "Sem horários definidos";
-    
+
     // Agrupa dias com mesmo horário
     const grupos: any = {};
     diasAtivos.forEach((h) => {
@@ -139,11 +141,14 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
         if (dias.length === 1) {
           return `${dias[0].slice(0, 3)}: ${inicio} - ${fim}`;
         }
-        return `${dias[0].slice(0, 3)} - ${dias[dias.length - 1].slice(0, 3)}: ${inicio} - ${fim}`;
+        return `${dias[0].slice(0, 3)} - ${dias[dias.length - 1].slice(
+          0,
+          3
+        )}: ${inicio} - ${fim}`;
       })
       .join(" | ");
   };
-  
+
   return (
     <HStack
       border="1px solid"
@@ -192,7 +197,10 @@ export default function EditarLandingPage() {
   // Configurações editáveis
   const [titulo, setTitulo] = useState("Agendamento");
   const [logoImg, setLogoImg] = useState("/images/logo.svg");
-  
+  const [instagram, setInstagram] = useState("");
+  const [facebook, setFacebook] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
+
   const [horarios, setHorarios] = useState([
     { dia: "Segunda-feira", inicio: "09:00", fim: "18:00", ativo: true },
     { dia: "Terça-feira", inicio: "09:00", fim: "18:00", ativo: true },
@@ -231,7 +239,7 @@ export default function EditarLandingPage() {
     return valor;
   }
 
-    const handleReset = () => {
+  const handleReset = () => {
     setTitulo(valoresPadrao.titulo);
     setLogoImg(valoresPadrao.logoImg);
     setHorarios(valoresPadrao.horarios);
@@ -239,15 +247,14 @@ export default function EditarLandingPage() {
     setExibirAviso(valoresPadrao.exibirAviso);
 
     toast({
-        title: "Configurações resetadas!",
-        description: "As configurações voltaram ao padrão original.",
-        status: "info",
-        duration: 3000,
-        isClosable: true,
-        position: "top-right",
+      title: "Configurações resetadas!",
+      description: "As configurações voltaram ao padrão original.",
+      status: "info",
+      duration: 3000,
+      isClosable: true,
+      position: "top-right",
     });
-    };
-
+  };
 
   function handerChanger(e: React.ChangeEvent<HTMLInputElement>) {
     setCelular(formatarCelular(e.target.value));
@@ -269,6 +276,9 @@ export default function EditarLandingPage() {
         textoAviso,
         exibirAviso,
         camposAtivos,
+        instagram,
+        facebook,
+        whatsapp,
       };
 
       const res = await fetch(`${apiBase}/landing-page-config`, {
@@ -304,24 +314,15 @@ export default function EditarLandingPage() {
   const PreviewLandingPage = () => {
     return (
       <Flex
-        minH="100vh"
+        h="100%"
         bg="barber.900"
         direction="column"
         align="center"
         justify="flex-start"
         p={4}
-        gap="10"
-        position="sticky"
-        top="20px"
-        maxH="calc(100vh - 40px)"
-        overflowY="auto"
         css={{
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "rgba(0,0,0,0.1)",
-          },
+          "&::-webkit-scrollbar": { width: "8px" },
+          "&::-webkit-scrollbar-track": { background: "rgba(0,0,0,0.1)" },
           "&::-webkit-scrollbar-thumb": {
             background: "#FF8C00",
             borderRadius: "4px",
@@ -363,7 +364,7 @@ export default function EditarLandingPage() {
           >
             <Image src={logoImg} alt="Logo" width={150} height={150} />
           </Flex>
-          
+
           <Flex margin="5">
             <BusinessHoursChip horarios={horarios} />
           </Flex>
@@ -538,199 +539,350 @@ export default function EditarLandingPage() {
               {textoAviso}
             </Text>
           )}
+
+          <Flex
+            mt={6}
+            gap={4}
+            justify="center"
+            align="center"
+            w="85%"
+            flexWrap="wrap"
+          >
+            {whatsapp && (
+              <Link
+                href={
+                  whatsapp.startsWith("http")
+                    ? whatsapp
+                    : `https://wa.me/${whatsapp.replace(/\D/g, "")}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="WhatsApp"
+                  icon={<FaWhatsapp />}
+                  size="lg"
+                  colorScheme="green"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+
+            {instagram && (
+              <Link
+                href={
+                  instagram.startsWith("http")
+                    ? instagram
+                    : `https://instagram.com/${instagram.replace("@", "")}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="Instagram"
+                  icon={<FaInstagram />}
+                  size="lg"
+                  colorScheme="pink"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+
+            {facebook && (
+              <Link
+                href={
+                  facebook.startsWith("http")
+                    ? facebook
+                    : `https://facebook.com/${facebook}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="Facebook"
+                  icon={<FaFacebook />}
+                  size="lg"
+                  colorScheme="blue"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: "scale(1.1)" }}
+                />
+              </Link>
+            )}
+          </Flex>
         </Flex>
       </Flex>
     );
   };
 
   return (
-    <Flex minH="100vh" bg="barber.900" p={4}>
-      <Grid
-        templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
-        gap={6}
-        maxW="1800px"
-        width="100%"
-        mx="auto"
-      >
-        {/* Painel de Edição */}
-        <Flex direction="column" bg="barber.400" borderRadius="xl" p={6}>
-          <Heading
-            fontSize="2xl"
-            mb={6}
-            bgGradient="linear(to-r, orange.400, yellow.400)"
-            bgClip="text"
+    <Flex minH="100vh" bg="barber.900" overflowY="hidden">
+      <Box width="100%" p={4} h="100vh">
+        <Grid
+          templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
+          gap={6}
+          h="100%"
+          alignItems="stretch"
+          maxW="1800px"
+          width="100%"
+          mx="auto"
+        >
+          {/* Painel de Edição */}
+          <Flex
+            direction="column"
+            bg="barber.400"
+            borderRadius="xl"
+            p={6}
+            h="100%"
+            overflowY="auto"
           >
-            Editar Landing Page
-          </Heading>
+            <Heading
+              fontSize="2xl"
+              mb={6}
+              bgGradient="linear(to-r, orange.400, yellow.400)"
+              bgClip="text"
+            >
+              Editar Landing Page
+            </Heading>
 
-          <Tabs colorScheme="orange" variant="enclosed" size="sm">
-            <TabList>
-              <Tab fontSize="xs">Básico</Tab>
-              <Tab fontSize="xs">Horários</Tab>
-            </TabList>
+            <Tabs colorScheme="orange" variant="enclosed" size="sm">
+              <TabList>
+                <Tab fontSize="xs">Básico</Tab>
+                <Tab fontSize="xs">Horários</Tab>
+                <Tab fontSize="xs">Social</Tab>
+              </TabList>
 
-            <TabPanels>
-              {/* Tab 1: Informações Básicas */}
-              <TabPanel>
-                <VStack spacing={4} align="stretch">
-                  <FormControl>
-                    <FormLabel color="white" fontSize="sm">
-                      Título da Página
-                    </FormLabel>
-                    <Input
-                      value={titulo}
-                      onChange={(e) => setTitulo(e.target.value)}
-                      bg="barber.900"
-                      borderColor="gray.600"
-                      color="white"
-                      size="sm"
-                      _hover={{ borderColor: "orange.400" }}
-                    />
-                  </FormControl>
-
-                  <Divider my={2} />
-
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel color="white" mb={0} fontSize="sm" flex="1">
-                      Exibir aviso de aprovação
-                    </FormLabel>
-                    <Switch
-                      colorScheme="orange"
-                      isChecked={exibirAviso}
-                      onChange={(e) => setExibirAviso(e.target.checked)}
-                    />
-                  </FormControl>
-
-                  {exibirAviso && (
+              <TabPanels>
+                {/* Tab 1: Informações Básicas */}
+                <TabPanel>
+                  <VStack spacing={4} align="stretch">
                     <FormControl>
                       <FormLabel color="white" fontSize="sm">
-                        Texto do Aviso
+                        Título da Página
                       </FormLabel>
                       <Input
-                        as="textarea"
-                        value={textoAviso}
-                        onChange={(e) => setTextoAviso(e.target.value)}
+                        value={titulo}
+                        onChange={(e) => setTitulo(e.target.value)}
                         bg="barber.900"
                         borderColor="gray.600"
                         color="white"
                         size="sm"
                         _hover={{ borderColor: "orange.400" }}
-                        rows={4}
                       />
                     </FormControl>
-                  )}
-                </VStack>
-              </TabPanel>
 
-              {/* Tab 2: Horários */}
-              <TabPanel>
-                <VStack spacing={3} align="stretch" maxH="500px" overflowY="auto">
-                  <Text color="gray.300" fontSize="xs" mb={2}>
-                    Configure os dias e horários de funcionamento
-                  </Text>
-                  {horarios.map((horario, index) => (
-                    <Box
-                      key={index}
-                      p={3}
-                      bg="barber.900"
-                      borderRadius="md"
-                      borderWidth="1px"
-                      borderColor={horario.ativo ? "green.500" : "gray.600"}
-                    >
-                      <HStack justify="space-between" mb={2}>
-                        <Text color="white" fontSize="sm" fontWeight="bold">
-                          {horario.dia}
-                        </Text>
-                        <Switch
+                    <Divider my={2} />
+
+                    <FormControl display="flex" alignItems="center">
+                      <FormLabel color="white" mb={0} fontSize="sm" flex="1">
+                        Exibir aviso de aprovação
+                      </FormLabel>
+                      <Switch
+                        colorScheme="orange"
+                        isChecked={exibirAviso}
+                        onChange={(e) => setExibirAviso(e.target.checked)}
+                      />
+                    </FormControl>
+
+                    {exibirAviso && (
+                      <FormControl>
+                        <FormLabel color="white" fontSize="sm">
+                          Texto do Aviso
+                        </FormLabel>
+                        <Input
+                          value={textoAviso}
+                          onChange={(e) => setTextoAviso(e.target.value)}
+                          bg="barber.900"
+                          borderColor="gray.600"
+                          color="white"
                           size="sm"
-                          colorScheme="green"
-                          isChecked={horario.ativo}
-                          onChange={(e) =>
-                            handleUpdateHorario(index, "ativo", e.target.checked)
-                          }
+                          _hover={{ borderColor: "orange.400" }}
                         />
-                      </HStack>
-                      {horario.ativo && (
-                        <HStack spacing={2}>
-                          <FormControl>
-                            <FormLabel color="gray.400" fontSize="xs">
-                              Abertura
-                            </FormLabel>
-                            <Input
-                              type="time"
-                              value={horario.inicio}
-                              onChange={(e) =>
-                                handleUpdateHorario(index, "inicio", e.target.value)
-                              }
-                              bg="gray.800"
-                              borderColor="gray.600"
-                              color="white"
-                              size="xs"
-                            />
-                          </FormControl>
-                          <FormControl>
-                            <FormLabel color="gray.400" fontSize="xs">
-                              Fechamento
-                            </FormLabel>
-                            <Input
-                              type="time"
-                              value={horario.fim}
-                              onChange={(e) =>
-                                handleUpdateHorario(index, "fim", e.target.value)
-                              }
-                              bg="gray.800"
-                              borderColor="gray.600"
-                              color="white"
-                              size="xs"
-                            />
-                          </FormControl>
+                      </FormControl>
+                    )}
+                  </VStack>
+                </TabPanel>
+
+                {/* Tab 2: Horários */}
+                <TabPanel>
+                  <VStack
+                    spacing={3}
+                    align="stretch"
+                    maxH="500px"
+                    overflowY="auto"
+                  >
+                    <Text color="gray.300" fontSize="xs" mb={2}>
+                      Configure os dias e horários de funcionamento
+                    </Text>
+                    {horarios.map((horario, index) => (
+                      <Box
+                        key={index}
+                        p={3}
+                        bg="barber.900"
+                        borderRadius="md"
+                        borderWidth="1px"
+                        borderColor={horario.ativo ? "green.500" : "gray.600"}
+                      >
+                        <HStack justify="space-between" mb={2}>
+                          <Text color="white" fontSize="sm" fontWeight="bold">
+                            {horario.dia}
+                          </Text>
+                          <Switch
+                            size="sm"
+                            colorScheme="green"
+                            isChecked={horario.ativo}
+                            onChange={(e) =>
+                              handleUpdateHorario(
+                                index,
+                                "ativo",
+                                e.target.checked
+                              )
+                            }
+                          />
                         </HStack>
-                      )}
-                    </Box>
-                  ))}
-                </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+                        {horario.ativo && (
+                          <HStack spacing={2}>
+                            <FormControl>
+                              <FormLabel color="gray.400" fontSize="xs">
+                                Abertura
+                              </FormLabel>
+                              <Input
+                                type="time"
+                                value={horario.inicio}
+                                onChange={(e) =>
+                                  handleUpdateHorario(
+                                    index,
+                                    "inicio",
+                                    e.target.value
+                                  )
+                                }
+                                bg="gray.800"
+                                borderColor="gray.600"
+                                color="white"
+                                size="xs"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel color="gray.400" fontSize="xs">
+                                Fechamento
+                              </FormLabel>
+                              <Input
+                                type="time"
+                                value={horario.fim}
+                                onChange={(e) =>
+                                  handleUpdateHorario(
+                                    index,
+                                    "fim",
+                                    e.target.value
+                                  )
+                                }
+                                bg="gray.800"
+                                borderColor="gray.600"
+                                color="white"
+                                size="xs"
+                              />
+                            </FormControl>
+                          </HStack>
+                        )}
+                      </Box>
+                    ))}
+                  </VStack>
+                </TabPanel>
 
-          <Divider my={4} />
+                {/* Tab 3: Redes Sociais */}
+                <TabPanel>
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        Instagram
+                      </FormLabel>
+                      <Input
+                        value={instagram}
+                        onChange={(e) => setInstagram(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: "orange.400" }}
+                      />
+                    </FormControl>
 
-          <HStack justify="flex-end" spacing={3}>
-            <Button
-              size="sm"
-              variant="outline"
-              colorScheme="gray"
-              onClick={() => window.history.back()}
-            >
-              Cancelar
-            </Button>
-            <Button
-              size="sm"
-              bgGradient="linear(to-r, orange.400, yellow.400)"
-              color="gray.900"
-              _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
-              onClick={handleSalvar}
-              isLoading={isLoading}
-              loadingText="Salvando..."
-            >
-              Salvar Alterações
-            </Button>
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        Facebook
+                      </FormLabel>
+                      <Input
+                        value={facebook}
+                        onChange={(e) => setFacebook(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: "orange.400" }}
+                      />
+                    </FormControl>
+
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        WhatsApp
+                      </FormLabel>
+                      <Input
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: "orange.400" }}
+                      />
+                    </FormControl>
+                  </VStack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+
+            <Divider my={4} />
+
+            <HStack justify="flex-end" spacing={3}>
+              <Button
+                size="sm"
+                variant="unstyled"
+                onClick={() => window.history.back()}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                bgGradient="linear(to-r, orange.400, yellow.400)"
+                color="gray.900"
+                _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
+                onClick={handleSalvar}
+                isLoading={isLoading}
+                loadingText="Salvando..."
+              >
+                Salvar Alterações
+              </Button>
               <Button
                 size="sm"
                 variant="outline"
                 colorScheme="red"
                 onClick={handleReset}
-            >
+              >
                 Resetar Página
-            </Button>
-          </HStack>
-        </Flex>
-        
-        {/* Preview em Tempo Real */}
-        <Box display={{ base: "none", lg: "block" }}>
-          <PreviewLandingPage />
-        </Box>
-      </Grid>
+              </Button>
+            </HStack>
+          </Flex>
+
+          {/* Preview em Tempo Real */}
+          <Box display={{ base: "none", lg: "block" }} h="100%">
+            <PreviewLandingPage />
+          </Box>
+        </Grid>
+      </Box>
     </Flex>
   );
 }

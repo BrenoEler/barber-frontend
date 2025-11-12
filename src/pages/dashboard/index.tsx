@@ -267,6 +267,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
                         <Button
                           size="sm"
                           colorScheme="red"
+                          display="block"
                           onClick={(e) => {
                             e.stopPropagation();
                             if (confirm("Tem certeza que quer deletar este agendamento?")) {
