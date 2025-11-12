@@ -6,14 +6,15 @@ import { AuthProvider } from "../context/AuthContext";
 import { Toaster } from "sonner";
 
 const styles = {
-  global: {
+  global: (props: any) => ({
     body: {
-      color: "gray.100",
+      bg: props.colorMode === "dark" ? "barber.900" : "gray.100",
+      color: props.colorMode === "dark" ? "gray.100" : "gray.800",
     },
     a: {
-      color: "#fff",
+      color: props.colorMode === "dark" ? "#FFF" : "#000",
     },
-  },
+  }),
 };
 
 const colors = {
@@ -31,6 +32,11 @@ const colors = {
   orange: {
     900: "#fba931",
   },
+};
+
+const config = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
 };
 
 const themes = extendTheme({ colors, styles });

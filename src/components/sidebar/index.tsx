@@ -8,6 +8,7 @@ import {
   Drawer,
   DrawerContent,
   useColorModeValue,
+  useColorMode,
   Text,
   useDisclosure,
   BoxProps,
@@ -24,9 +25,9 @@ import {
   FiCreditCard,
   FiHelpCircle,
 } from "react-icons/fi";
-
-import { IconType } from "react-icons";
 import { FaUserCog } from "react-icons/fa";
+import { FiSun, FiMoon } from "react-icons/fi";
+import { IconType } from "react-icons";
 import Link from "next/link";
 
 interface LinkItemProps {
@@ -48,9 +49,9 @@ export function Sidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box minH="100vh" bg="barber.900">
+    <Box minH="100vh" bg={useColorModeValue("gray.100", "barber.900")}>
       <SidebarContent
-        onClose={() => onClose}
+        onClose={() => onClose()}
         display={{ base: "none", md: "block" }}
       />
 
@@ -84,18 +85,20 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const mainItems = LinkItems.filter((item) => item.name !== "Minha Conta");
   const userSetting = LinkItems.find((item) => item.name === "Minha Conta");
 
+  const bg = useColorModeValue("gray.500", "barber.400");
+  const borderColor = useColorModeValue("gray.500", "red.700");
+
   return (
     <Flex
       direction="column"
       h="full"
-      bg="barber.400"
+      bg={bg}
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
+      borderRightColor={borderColor}
       w={{ base: "full", md: 60 }}
       pos="fixed"
       {...rest}
     >
-      {/* Itens que ficam no topo */}
       <Flex h="20" alignItems="center" justifyContent="space-between" mx="8">
         <Link href="/dashboard">
           <Flex cursor="pointer" userSelect="none" flexDirection="row">
@@ -112,7 +115,10 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             </Text>
           </Flex>
         </Link>
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        <Flex align="center" gap={2}>
+          <ColorModeToggle />
+          <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        </Flex>
       </Flex>
 
       {mainItems.map((link) => (
@@ -142,6 +148,8 @@ interface NavItemProps extends FlexProps {
 }
 
 const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
+  const hoverBg = useColorModeValue("gray.300", "barber.900");
+
   return (
     <Link href={route} style={{ textDecoration: "none" }}>
       <Flex
@@ -152,7 +160,7 @@ const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
         role="group"
         cursor="pointer"
         _hover={{
-          bg: "barber.900",
+          bg: hoverBg,
           color: "white",
         }}
         {...rest}
@@ -178,15 +186,18 @@ interface MobileProps extends FlexProps {
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const bg = useColorModeValue("white", "gray.900");
+  const border = useColorModeValue("gray.200", "gray.700");
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 24 }}
       height="20"
       alignItems="center"
-      bg={useColorModeValue("white", "gray.900")}
+      bg={bg}
       borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      borderBottomColor={border}
       justifyContent="flex-start"
       {...rest}
     >
@@ -197,8 +208,8 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
         icon={<FiMenu />}
       />
 
-      <Flex flexDirection="row">
-        <Text ml={8} fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+      <Flex flexDirection="row" alignItems="center" ml={4}>
+        <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
           Barber
         </Text>
         <Text
@@ -210,6 +221,22 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           PRO
         </Text>
       </Flex>
+      <ColorModeToggle ml="auto" />
     </Flex>
+  );
+};
+
+function ColorModeToggle(props?: any) {
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  return (
+    <IconButton
+      aria-label="Alternar tema"
+      icon={colorMode === "light" ? <FiMoon /> : <FiSun />}
+      onClick={toggleColorMode}
+      variant="ghost"
+      color="button.cta"
+      {...props}
+    />
   );
 };
