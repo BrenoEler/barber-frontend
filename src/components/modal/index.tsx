@@ -1,20 +1,26 @@
 import {
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalFooter,
-  ModalBody,
-  ModalCloseButton,
-  Text,
   Button,
   Flex,
-} from "@chakra-ui/react";
+  Modal,
+  ModalBody,
+  ModalCloseButton,
+  ModalContent,
+  ModalFooter,
+  ModalHeader,
+  ModalOverlay,
+  Text,
+  VStack,
+  HStack,
+  Icon,
+  Box,
+  Divider,
+  useColorModeValue,
+} from '@chakra-ui/react';
 
-import { FiUser, FiScissors, FiCalendar } from "react-icons/fi";
-import { FaCalendar, FaMoneyBillAlt } from "react-icons/fa";
-import { ScheduleItem } from "../../pages/dashboard";
-import { formatDateTime, formaterPrice } from "../../helper";
+import { FaCalendar, FaMoneyBillAlt } from 'react-icons/fa';
+import { FiScissors, FiUser, FiCheckCircle, FiTrash2 } from 'react-icons/fi';
+import { formatDateTime, formaterPrice } from '../../helper';
+import { ScheduleItem } from '../../pages/dashboard';
 
 interface ModalInfoProps {
   isOpen: boolean;
@@ -22,6 +28,7 @@ interface ModalInfoProps {
   onClose: () => void;
   data?: ScheduleItem;
   finishService: () => Promise<void>;
+  deleteService: () => Promise<void>;
 }
 
 export function ModalInfo({
@@ -30,55 +37,143 @@ export function ModalInfo({
   onClose,
   data,
   finishService,
+  deleteService,
 }: ModalInfoProps) {
+  const borderColor = useColorModeValue("whiteAlpha.200", "gray.600");
+
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
-      <ModalOverlay />
-      <ModalContent bg="barber.400">
-        <ModalHeader>Próximo</ModalHeader>
-        <ModalCloseButton />
-
-        <ModalBody>
-          <Flex align="center" mb={3}>
-            <FiUser size={28} color="#FFB13e" />
-            <Text ml={3} fontSize="2xl" fontWeight="bold" color="white">
-              {data?.customer}
+    <Modal isOpen={isOpen} onClose={onClose} isCentered size="lg">
+      <ModalOverlay bg="blackAlpha.600" backdropFilter="blur(4px)" />
+      <ModalContent bg="barber.400" borderRadius="xl" border="1px solid" borderColor={borderColor}>
+        <ModalHeader>
+          <HStack spacing={3}>
+            <Icon as={FiUser} color="button.cta" boxSize={6} />
+            <Text color="whiteAlpha.900" fontSize="xl" fontWeight="bold">
+              Detalhes do Agendamento
             </Text>
-          </Flex>
+          </HStack>
+        </ModalHeader>
+        <ModalCloseButton color="whiteAlpha.700" _hover={{ color: "white" }} />
+        
+        <Divider borderColor={borderColor} />
+        
+        <ModalBody py={6}>
+          <VStack spacing={4} align="stretch">
+            {/* Cliente */}
+            <Box
+              bg="barber.900"
+              p={4}
+              borderRadius="lg"
+              border="1px solid"
+              borderColor={borderColor}
+            >
+              <HStack spacing={3} mb={2}>
+                <Icon as={FiUser} color="button.cta" boxSize={5} />
+                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="medium" textTransform="uppercase" letterSpacing="wide">
+                  Cliente
+                </Text>
+              </HStack>
+              <Text fontSize="lg" fontWeight="bold" color="whiteAlpha.900" pl={8}>
+                {data?.customer || "Não informado"}
+              </Text>
+            </Box>
 
-          <Flex align="center" mb={3}>
-            <FiScissors size={28} color="#FFF" />
-            <Text ml={3} fontSize="large" fontWeight="bold" color="white">
-              {data?.haircut?.name}
-            </Text>
-          </Flex>
+            {/* Serviço */}
+            <Box
+              bg="barber.900"
+              p={4}
+              borderRadius="lg"
+              border="1px solid"
+              borderColor={borderColor}
+            >
+              <HStack spacing={3} mb={2}>
+                <Icon as={FiScissors} color="whiteAlpha.700" boxSize={5} />
+                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="medium" textTransform="uppercase" letterSpacing="wide">
+                  Serviço
+                </Text>
+              </HStack>
+              <Text fontSize="md" fontWeight="semibold" color="whiteAlpha.900" pl={8}>
+                {data?.haircut?.name || "Não informado"}
+              </Text>
+            </Box>
 
-          <Flex align="center" mb={3}>
-            <FaMoneyBillAlt size={28} color="#46ef75" />
-            <Text ml={3} fontSize="large" fontWeight="bold" color="white">
-              {formaterPrice(Number(data?.haircut?.price))}
-            </Text>
-          </Flex>
+            {/* Data e Hora */}
+            <Box
+              bg="barber.900"
+              p={4}
+              borderRadius="lg"
+              border="1px solid"
+              borderColor={borderColor}
+            >
+              <HStack spacing={3} mb={2}>
+                <Icon as={FaCalendar} color="#FFb13e" boxSize={5} />
+                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="medium" textTransform="uppercase" letterSpacing="wide">
+                  Data e Horário
+                </Text>
+              </HStack>
+              <Text fontSize="md" fontWeight="semibold" color="whiteAlpha.900" pl={8}>
+                {formatDateTime(
+                  data?.dataHora === undefined
+                    ? data?.scheduled_at
+                    : data?.dataHora,
+                ) || "Não informado"}
+              </Text>
+            </Box>
 
-          <Flex align="center" mb={3}>
-            <FaCalendar size={28} color="#FFb13e" />
-            <Text ml={3} fontSize="large" fontWeight="bold" color="white">
-              {formatDateTime(data?.dataHora)}
-            </Text>
-          </Flex>
-
-          <ModalFooter>
+            {/* Preço */}
+            <Box
+              bg="barber.900"
+              p={4}
+              borderRadius="lg"
+              border="1px solid"
+              borderColor={borderColor}
+            >
+              <HStack spacing={3} mb={2}>
+                <Icon as={FaMoneyBillAlt} color="#46ef75" boxSize={5} />
+                <Text fontSize="xs" color="whiteAlpha.600" fontWeight="medium" textTransform="uppercase" letterSpacing="wide">
+                  Valor
+                </Text>
+              </HStack>
+              <Text fontSize="xl" fontWeight="bold" color="#46ef75" pl={8}>
+                {data?.haircut?.price ? formaterPrice(Number(data?.haircut?.price)) : "Não informado"}
+              </Text>
+            </Box>
+          </VStack>
+        </ModalBody>
+        
+        <Divider borderColor={borderColor} />
+        
+        <ModalFooter>
+          <HStack spacing={3} w="100%">
             <Button
-              bg="button.cta"
-              _hover={{ bg: "#FFb13e" }}
-              color="#FFF"
-              mr={3}
+              variant="outline"
+              flex={1}
+              leftIcon={<Icon as={FiTrash2} />}
+              borderColor="red.400"
+              color="red.400"
+              _hover={{ bg: "red.50", borderColor: "red.500", color: "red.500" }}
+              onClick={() => deleteService()}
+            >
+              Deletar
+            </Button>
+            <Button
+              flex={1}
+              leftIcon={<Icon as={FiCheckCircle} />}
+              bgGradient="linear(to-r, button.cta, #FFb13e)"
+              color="gray.900"
+              _hover={{
+                bgGradient: "linear(to-r, #FFb13e, button.cta)",
+                transform: "translateY(-2px)",
+                boxShadow: "md",
+              }}
               onClick={() => finishService()}
+              fontWeight="bold"
+              transition="all 0.2s"
             >
               Finalizar Serviço
             </Button>
-          </ModalFooter>
-        </ModalBody>
+          </HStack>
+        </ModalFooter>
       </ModalContent>
     </Modal>
   );

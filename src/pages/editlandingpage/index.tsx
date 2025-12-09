@@ -1,47 +1,48 @@
-import { useState, useEffect, ChangeEvent } from "react";
 import {
-  Flex,
-  Heading,
-  Button,
-  Input,
-  Text,
+  Badge,
   Box,
-  VStack,
-  HStack,
-  Switch,
+  Button,
+  Divider,
+  Flex,
   FormControl,
   FormLabel,
-  Divider,
-  useToast,
-  Tabs,
-  TabList,
-  TabPanels,
-  Tab,
-  TabPanel,
-  Select,
   Grid,
-  Badge,
+  Heading,
+  HStack,
   Icon,
-} from "@chakra-ui/react";
-import Image from "next/image";
-import Head from "next/head";
-import { FaClock } from "react-icons/fa";
-import { HiUpload } from "react-icons/hi";
+  IconButton,
+  Input,
+  Link,
+  Select,
+  Switch,
+  Tab,
+  TabList,
+  TabPanel,
+  TabPanels,
+  Tabs,
+  Text,
+  useToast,
+  VStack,
+} from '@chakra-ui/react';
+import Head from 'next/head';
+import Image from 'next/image';
+import { ChangeEvent, useState } from 'react';
+import { FaClock, FaFacebook, FaInstagram, FaWhatsapp } from 'react-icons/fa';
 
 const valoresPadrao = {
-  titulo: "Agendamento",
-  logoImg: "/images/logo.svg",
+  titulo: 'Agendamento',
+  logoImg: '/images/logo.svg',
   horarios: [
-    { dia: "Segunda-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Terça-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Quarta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Quinta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Sexta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Sábado", inicio: "09:00", fim: "16:00", ativo: true },
-    { dia: "Domingo", inicio: "09:00", fim: "14:00", ativo: false },
+    { dia: 'Segunda-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Terça-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Quarta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Quinta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Sexta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Sábado', inicio: '09:00', fim: '16:00', ativo: true },
+    { dia: 'Domingo', inicio: '09:00', fim: '14:00', ativo: false },
   ],
   textoAviso:
-    "Seu agendamento não será aceito de imediato, o barbeiro terá que aprovar o agendamento. Caso aprovado ou reprovado, a devolutiva será enviada via WhatsApp.",
+    'Seu agendamento não será aceito de imediato, o barbeiro terá que aprovar o agendamento. Caso aprovado ou reprovado, a devolutiva será enviada via WhatsApp.',
   exibirAviso: true,
   camposAtivos: {
     nome: true,
@@ -59,19 +60,19 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
 
   // Mapeia os horários configurados para o formato esperado
   const diasMap: any = {
-    "Segunda-feira": 1,
-    "Terça-feira": 2,
-    "Quarta-feira": 3,
-    "Quinta-feira": 4,
-    "Sexta-feira": 5,
+    'Segunda-feira': 1,
+    'Terça-feira': 2,
+    'Quarta-feira': 3,
+    'Quinta-feira': 4,
+    'Sexta-feira': 5,
     Sábado: 6,
     Domingo: 0,
   };
 
   horarios.forEach((h) => {
     if (h.ativo) {
-      const [openH, openM] = h.inicio.split(":").map(Number);
-      const [closeH, closeM] = h.fim.split(":").map(Number);
+      const [openH, openM] = h.inicio.split(':').map(Number);
+      const [closeH, closeM] = h.fim.split(':').map(Number);
       schedule[diasMap[h.dia]] = {
         open: openH * 60 + openM,
         close: closeH * 60 + closeM,
@@ -82,8 +83,8 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   const formatTime = (minutes: number) => {
     const h = Math.floor(minutes / 60)
       .toString()
-      .padStart(2, "0");
-    const m = (minutes % 60).toString().padStart(2, "0");
+      .padStart(2, '0');
+    const m = (minutes % 60).toString().padStart(2, '0');
     return `${h}:${m}`;
   };
 
@@ -93,8 +94,8 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
 
   const todaysHours = schedule[dayOfWeek];
   let isOpen = false;
-  let statusText = "Fechado";
-  let hoursText = "Fechado hoje";
+  let statusText = 'Fechado';
+  let hoursText = 'Fechado hoje';
 
   if (todaysHours) {
     isOpen =
@@ -102,13 +103,13 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
       currentTimeInMinutes < todaysHours.close;
 
     if (isOpen) {
-      statusText = "Aberto agora";
+      statusText = 'Aberto agora';
       hoursText = `Fecha às ${formatTime(todaysHours.close)}`;
     } else if (currentTimeInMinutes < todaysHours.open) {
-      statusText = "Fechado";
+      statusText = 'Fechado';
       hoursText = `Abre às ${formatTime(todaysHours.open)}`;
     } else {
-      statusText = "Fechado";
+      statusText = 'Fechado';
       let nextDay = dayOfWeek + 1;
       while (!schedule[nextDay % 7] && nextDay < dayOfWeek + 7) {
         nextDay++;
@@ -123,7 +124,7 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
   // Gera texto dos horários
   const getHoursText = () => {
     const diasAtivos = horarios.filter((h) => h.ativo);
-    if (diasAtivos.length === 0) return "Sem horários definidos";
+    if (diasAtivos.length === 0) return 'Sem horários definidos';
 
     // Agrupa dias com mesmo horário
     const grupos: any = {};
@@ -135,23 +136,23 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
 
     return Object.entries(grupos)
       .map(([horario, dias]: any) => {
-        const [inicio, fim] = horario.split("-");
+        const [inicio, fim] = horario.split('-');
         if (dias.length === 1) {
           return `${dias[0].slice(0, 3)}: ${inicio} - ${fim}`;
         }
         return `${dias[0].slice(0, 3)} - ${dias[dias.length - 1].slice(
           0,
-          3
+          3,
         )}: ${inicio} - ${fim}`;
       })
-      .join(" | ");
+      .join(' | ');
   };
 
   return (
     <HStack
       border="1px solid"
-      borderColor={isOpen ? "green.200" : "red.200"}
-      bg={isOpen ? "green.50" : "red.50"}
+      borderColor={isOpen ? 'green.200' : 'red.200'}
+      bg={isOpen ? 'green.50' : 'red.50'}
       borderRadius="10px"
       px={4}
       py={2}
@@ -159,7 +160,7 @@ function BusinessHoursChip({ horarios }: { horarios: any[] }) {
       align="center"
     >
       <Badge
-        colorScheme={isOpen ? "green" : "red"}
+        colorScheme={isOpen ? 'green' : 'red'}
         variant="solid"
         borderRadius="full"
         px={2}
@@ -180,34 +181,37 @@ export default function EditarLandingPage() {
   const apiBase = process.env.NEXT_PUBLIC_API_URL;
 
   // Estados do formulário preview
-  const [nome, setNome] = useState("");
-  const [email, setEmail] = useState("");
-  const [celular, setCelular] = useState("");
-  const [data, setData] = useState("");
-  const [horario, setHorario] = useState("");
-  const [haircutId, setHaircutId] = useState("");
+  const [nome, setNome] = useState('');
+  const [email, setEmail] = useState('');
+  const [celular, setCelular] = useState('');
+  const [data, setData] = useState('');
+  const [horario, setHorario] = useState('');
+  const [haircutId, setHaircutId] = useState('');
   const [haircuts, setHaircuts] = useState([
-    { id: "1", name: "Corte + Barba" },
-    { id: "2", name: "Corte Simples" },
-    { id: "3", name: "Barba" },
+    { id: '1', name: 'Corte + Barba' },
+    { id: '2', name: 'Corte Simples' },
+    { id: '3', name: 'Barba' },
   ]);
 
   // Configurações editáveis
-  const [titulo, setTitulo] = useState("Agendamento");
-  const [logoImg, setLogoImg] = useState("/images/logo.svg");
+  const [titulo, setTitulo] = useState('Agendamento');
+  const [logoImg, setLogoImg] = useState('/images/logo.svg');
+  const [instagram, setInstagram] = useState('');
+  const [facebook, setFacebook] = useState('');
+  const [whatsapp, setWhatsapp] = useState('');
 
   const [horarios, setHorarios] = useState([
-    { dia: "Segunda-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Terça-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Quarta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Quinta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Sexta-feira", inicio: "09:00", fim: "18:00", ativo: true },
-    { dia: "Sábado", inicio: "09:00", fim: "16:00", ativo: true },
-    { dia: "Domingo", inicio: "09:00", fim: "14:00", ativo: false },
+    { dia: 'Segunda-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Terça-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Quarta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Quinta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Sexta-feira', inicio: '09:00', fim: '18:00', ativo: true },
+    { dia: 'Sábado', inicio: '09:00', fim: '16:00', ativo: true },
+    { dia: 'Domingo', inicio: '09:00', fim: '14:00', ativo: false },
   ]);
 
   const [textoAviso, setTextoAviso] = useState(
-    "Seu agendamento não será aceito de imediato, o barbeiro terá que aprovar o agendamento. Caso aprovado ou reprovado, a devolutiva será enviada via WhatsApp."
+    'Seu agendamento não será aceito de imediato, o barbeiro terá que aprovar o agendamento. Caso aprovado ou reprovado, a devolutiva será enviada via WhatsApp.',
   );
   const [exibirAviso, setExibirAviso] = useState(true);
 
@@ -221,15 +225,15 @@ export default function EditarLandingPage() {
   });
 
   function formatarCelular(valor: string) {
-    valor = valor.replace(/\D/g, "");
+    valor = valor.replace(/\D/g, '');
     if (valor.length > 10) {
-      valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+      valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
     } else if (valor.length > 6) {
-      valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+      valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
     } else if (valor.length > 2) {
-      valor = valor.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+      valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
     } else {
-      valor = valor.replace(/^(\d*)/, "$1");
+      valor = valor.replace(/^(\d*)/, '$1');
     }
     return valor;
   }
@@ -242,12 +246,12 @@ export default function EditarLandingPage() {
     setExibirAviso(valoresPadrao.exibirAviso);
 
     toast({
-      title: "Configurações resetadas!",
-      description: "As configurações voltaram ao padrão original.",
-      status: "info",
+      title: 'Configurações resetadas!',
+      description: 'As configurações voltaram ao padrão original.',
+      status: 'info',
       duration: 3000,
       isClosable: true,
-      position: "top-right",
+      position: 'top-right',
     });
   };
 
@@ -271,32 +275,35 @@ export default function EditarLandingPage() {
         textoAviso,
         exibirAviso,
         camposAtivos,
+        instagram,
+        facebook,
+        whatsapp,
       };
 
       const res = await fetch(`${apiBase}/landing-page-config`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(config),
       });
 
-      if (!res.ok) throw new Error("Erro ao salvar");
+      if (!res.ok) throw new Error('Erro ao salvar');
 
       toast({
-        title: "Configurações salvas!",
-        description: "Sua landing page foi atualizada com sucesso.",
-        status: "success",
+        title: 'Configurações salvas!',
+        description: 'Sua landing page foi atualizada com sucesso.',
+        status: 'success',
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     } catch (error) {
       toast({
-        title: "Erro ao salvar",
-        description: "Não foi possível salvar as configurações.",
-        status: "error",
+        title: 'Erro ao salvar',
+        description: 'Não foi possível salvar as configurações.',
+        status: 'error',
         duration: 3000,
         isClosable: true,
-        position: "top-right",
+        position: 'top-right',
       });
     } finally {
       setIsLoading(false);
@@ -306,27 +313,18 @@ export default function EditarLandingPage() {
   const PreviewLandingPage = () => {
     return (
       <Flex
-        minH="100vh"
+        h="100%"
         bg="barber.900"
         direction="column"
         align="center"
         justify="flex-start"
         p={4}
-        gap="10"
-        position="sticky"
-        top="20px"
-        maxH="calc(100vh - 40px)"
-        overflowY="auto"
         css={{
-          "&::-webkit-scrollbar": {
-            width: "8px",
-          },
-          "&::-webkit-scrollbar-track": {
-            background: "rgba(0,0,0,0.1)",
-          },
-          "&::-webkit-scrollbar-thumb": {
-            background: "#FF8C00",
-            borderRadius: "4px",
+          '&::-webkit-scrollbar': { width: '8px' },
+          '&::-webkit-scrollbar-track': { background: 'rgba(0,0,0,0.1)' },
+          '&::-webkit-scrollbar-thumb': {
+            background: '#FF8C00',
+            borderRadius: '4px',
           },
         }}
       >
@@ -377,12 +375,12 @@ export default function EditarLandingPage() {
               mb={3}
               placeholder="Nome"
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -399,12 +397,12 @@ export default function EditarLandingPage() {
               mb={3}
               placeholder="E-mail"
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -421,12 +419,12 @@ export default function EditarLandingPage() {
               w="85%"
               mb={3}
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -443,12 +441,12 @@ export default function EditarLandingPage() {
               w="85%"
               mb={3}
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -465,12 +463,12 @@ export default function EditarLandingPage() {
               mb={3}
               size="lg"
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -484,12 +482,12 @@ export default function EditarLandingPage() {
               color="white"
               mb={3}
               _hover={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               _focus={{
-                borderColor: "white",
-                bg: "barber.900",
+                borderColor: 'white',
+                bg: 'barber.900',
               }}
               borderColor="barber.900"
               bg="barber.400"
@@ -505,7 +503,7 @@ export default function EditarLandingPage() {
                 <option
                   key={h.id}
                   value={h.id}
-                  style={{ backgroundColor: "#FFF", color: "#000" }}
+                  style={{ backgroundColor: '#FFF', color: '#000' }}
                 >
                   {h.name}
                 </option>
@@ -518,7 +516,7 @@ export default function EditarLandingPage() {
             size="lg"
             color="gray.900"
             bgGradient="linear(to-r, orange.400, yellow.400)"
-            _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
+            _hover={{ bgGradient: 'linear(to-r, orange.500, yellow.500)' }}
           >
             Solicitar Agendamento
           </Button>
@@ -540,225 +538,350 @@ export default function EditarLandingPage() {
               {textoAviso}
             </Text>
           )}
+
+          <Flex
+            mt={6}
+            gap={4}
+            justify="center"
+            align="center"
+            w="85%"
+            flexWrap="wrap"
+          >
+            {whatsapp && (
+              <Link
+                href={
+                  whatsapp.startsWith('http')
+                    ? whatsapp
+                    : `https://wa.me/${whatsapp.replace(/\D/g, '')}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="WhatsApp"
+                  icon={<FaWhatsapp />}
+                  size="lg"
+                  colorScheme="green"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: 'scale(1.1)' }}
+                />
+              </Link>
+            )}
+
+            {instagram && (
+              <Link
+                href={
+                  instagram.startsWith('http')
+                    ? instagram
+                    : `https://instagram.com/${instagram.replace('@', '')}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="Instagram"
+                  icon={<FaInstagram />}
+                  size="lg"
+                  colorScheme="pink"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: 'scale(1.1)' }}
+                />
+              </Link>
+            )}
+
+            {facebook && (
+              <Link
+                href={
+                  facebook.startsWith('http')
+                    ? facebook
+                    : `https://facebook.com/${facebook}`
+                }
+                isExternal
+              >
+                <IconButton
+                  aria-label="Facebook"
+                  icon={<FaFacebook />}
+                  size="lg"
+                  colorScheme="blue"
+                  borderRadius="full"
+                  variant="solid"
+                  _hover={{ transform: 'scale(1.1)' }}
+                />
+              </Link>
+            )}
+          </Flex>
         </Flex>
       </Flex>
     );
   };
 
   return (
-    <Flex minH="100vh" bg="barber.900" p={4}>
-      <Grid
-        templateColumns={{ base: "1fr", lg: "1fr 1fr" }}
-        gap={6}
-        maxW="1800px"
-        width="100%"
-        mx="auto"
-      >
-        {/* Painel de Edição */}
-        <Flex direction="column" bg="barber.400" borderRadius="xl" p={6}>
-          <Heading
-            fontSize="2xl"
-            mb={6}
-            bgGradient="linear(to-r, orange.400, yellow.400)"
-            bgClip="text"
+    <Flex minH="100vh" bg="barber.900" overflowY="hidden">
+      <Box width="100%" p={4} h="100vh">
+        <Grid
+          templateColumns={{ base: '1fr', lg: '1fr 1fr' }}
+          gap={6}
+          h="100%"
+          alignItems="stretch"
+          maxW="1800px"
+          width="100%"
+          mx="auto"
+        >
+          {/* Painel de Edição */}
+          <Flex
+            direction="column"
+            bg="barber.400"
+            borderRadius="xl"
+            p={6}
+            h="100%"
+            overflowY="auto"
           >
-            Editar Landing Page
-          </Heading>
+            <Heading
+              fontSize="2xl"
+              mb={6}
+              bgGradient="linear(to-r, orange.400, yellow.400)"
+              bgClip="text"
+            >
+              Editar Landing Page
+            </Heading>
 
-          <Tabs colorScheme="orange" variant="enclosed" size="sm">
-            <TabList>
-              <Tab fontSize="xs">Básico</Tab>
-              <Tab fontSize="xs">Horários</Tab>
-            </TabList>
-            {/* <FileUpload>
-              <FileUpload.HiddenInput />
-              <FileUpload.Trigger asChild>
-                <Button variant="outline" size="sm">
-                  <HiUpload /> Upload file
-                </Button>
-              </FileUpload.Trigger>
-              <FileUpload.List />
-            </FileUpload> */}
+            <Tabs colorScheme="orange" variant="enclosed" size="sm">
+              <TabList>
+                <Tab fontSize="xs">Básico</Tab>
+                <Tab fontSize="xs">Horários</Tab>
+                <Tab fontSize="xs">Social</Tab>
+              </TabList>
 
-            <TabPanels>
-              {/* Tab 1: Informações Básicas */}
-              <TabPanel>
-                <VStack spacing={4} align="stretch">
-                  <FormControl>
-                    <FormLabel color="white" fontSize="sm">
-                      Título da Página
-                    </FormLabel>
-                    <Input
-                      value={titulo}
-                      onChange={(e) => setTitulo(e.target.value)}
-                      bg="barber.900"
-                      borderColor="gray.600"
-                      color="white"
-                      size="sm"
-                      _hover={{ borderColor: "orange.400" }}
-                    />
-                  </FormControl>
-
-                  <Divider my={2} />
-
-                  <FormControl display="flex" alignItems="center">
-                    <FormLabel color="white" mb={0} fontSize="sm" flex="1">
-                      Exibir aviso de aprovação
-                    </FormLabel>
-                    <Switch
-                      colorScheme="orange"
-                      isChecked={exibirAviso}
-                      onChange={(e) => setExibirAviso(e.target.checked)}
-                    />
-                  </FormControl>
-
-                  {exibirAviso && (
+              <TabPanels>
+                {/* Tab 1: Informações Básicas */}
+                <TabPanel>
+                  <VStack spacing={4} align="stretch">
                     <FormControl>
                       <FormLabel color="white" fontSize="sm">
-                        Texto do Aviso
+                        Título da Página
                       </FormLabel>
                       <Input
-                        as="textarea"
-                        value={textoAviso}
-                        onChange={(e) => setTextoAviso(e.target.value)}
+                        value={titulo}
+                        onChange={(e) => setTitulo(e.target.value)}
                         bg="barber.900"
                         borderColor="gray.600"
                         color="white"
                         size="sm"
-                        _hover={{ borderColor: "orange.400" }}
-                        rows={4}
+                        _hover={{ borderColor: 'orange.400' }}
                       />
                     </FormControl>
-                  )}
-                </VStack>
-              </TabPanel>
 
-              {/* Tab 2: Horários */}
-              <TabPanel>
-                <VStack
-                  spacing={3}
-                  align="stretch"
-                  maxH="500px"
-                  overflowY="auto"
-                >
-                  <Text color="gray.300" fontSize="xs" mb={2}>
-                    Configure os dias e horários de funcionamento
-                  </Text>
-                  {horarios.map((horario, index) => (
-                    <Box
-                      key={index}
-                      p={3}
-                      bg="barber.900"
-                      borderRadius="md"
-                      borderWidth="1px"
-                      borderColor={horario.ativo ? "green.500" : "gray.600"}
-                    >
-                      <HStack justify="space-between" mb={2}>
-                        <Text color="white" fontSize="sm" fontWeight="bold">
-                          {horario.dia}
-                        </Text>
-                        <Switch
+                    <Divider my={2} />
+
+                    <FormControl display="flex" alignItems="center">
+                      <FormLabel color="white" mb={0} fontSize="sm" flex="1">
+                        Exibir aviso de aprovação
+                      </FormLabel>
+                      <Switch
+                        colorScheme="orange"
+                        isChecked={exibirAviso}
+                        onChange={(e) => setExibirAviso(e.target.checked)}
+                      />
+                    </FormControl>
+
+                    {exibirAviso && (
+                      <FormControl>
+                        <FormLabel color="white" fontSize="sm">
+                          Texto do Aviso
+                        </FormLabel>
+                        <Input
+                          value={textoAviso}
+                          onChange={(e) => setTextoAviso(e.target.value)}
+                          bg="barber.900"
+                          borderColor="gray.600"
+                          color="white"
                           size="sm"
-                          colorScheme="green"
-                          isChecked={horario.ativo}
-                          onChange={(e) =>
-                            handleUpdateHorario(
-                              index,
-                              "ativo",
-                              e.target.checked
-                            )
-                          }
+                          _hover={{ borderColor: 'orange.400' }}
                         />
-                      </HStack>
-                      {horario.ativo && (
-                        <HStack spacing={2}>
-                          <FormControl>
-                            <FormLabel color="gray.400" fontSize="xs">
-                              Abertura
-                            </FormLabel>
-                            <Input
-                              type="time"
-                              value={horario.inicio}
-                              onChange={(e) =>
-                                handleUpdateHorario(
-                                  index,
-                                  "inicio",
-                                  e.target.value
-                                )
-                              }
-                              bg="gray.800"
-                              borderColor="gray.600"
-                              color="white"
-                              size="xs"
-                            />
-                          </FormControl>
-                          <FormControl>
-                            <FormLabel color="gray.400" fontSize="xs">
-                              Fechamento
-                            </FormLabel>
-                            <Input
-                              type="time"
-                              value={horario.fim}
-                              onChange={(e) =>
-                                handleUpdateHorario(
-                                  index,
-                                  "fim",
-                                  e.target.value
-                                )
-                              }
-                              bg="gray.800"
-                              borderColor="gray.600"
-                              color="white"
-                              size="xs"
-                            />
-                          </FormControl>
+                      </FormControl>
+                    )}
+                  </VStack>
+                </TabPanel>
+
+                {/* Tab 2: Horários */}
+                <TabPanel>
+                  <VStack
+                    spacing={3}
+                    align="stretch"
+                    maxH="500px"
+                    overflowY="auto"
+                  >
+                    <Text color="gray.300" fontSize="xs" mb={2}>
+                      Configure os dias e horários de funcionamento
+                    </Text>
+                    {horarios.map((horario, index) => (
+                      <Box
+                        key={index}
+                        p={3}
+                        bg="barber.900"
+                        borderRadius="md"
+                        borderWidth="1px"
+                        borderColor={horario.ativo ? 'green.500' : 'gray.600'}
+                      >
+                        <HStack justify="space-between" mb={2}>
+                          <Text color="white" fontSize="sm" fontWeight="bold">
+                            {horario.dia}
+                          </Text>
+                          <Switch
+                            size="sm"
+                            colorScheme="green"
+                            isChecked={horario.ativo}
+                            onChange={(e) =>
+                              handleUpdateHorario(
+                                index,
+                                'ativo',
+                                e.target.checked,
+                              )
+                            }
+                          />
                         </HStack>
-                      )}
-                    </Box>
-                  ))}
-                </VStack>
-              </TabPanel>
-            </TabPanels>
-          </Tabs>
+                        {horario.ativo && (
+                          <HStack spacing={2}>
+                            <FormControl>
+                              <FormLabel color="gray.400" fontSize="xs">
+                                Abertura
+                              </FormLabel>
+                              <Input
+                                type="time"
+                                value={horario.inicio}
+                                onChange={(e) =>
+                                  handleUpdateHorario(
+                                    index,
+                                    'inicio',
+                                    e.target.value,
+                                  )
+                                }
+                                bg="gray.800"
+                                borderColor="gray.600"
+                                color="white"
+                                size="xs"
+                              />
+                            </FormControl>
+                            <FormControl>
+                              <FormLabel color="gray.400" fontSize="xs">
+                                Fechamento
+                              </FormLabel>
+                              <Input
+                                type="time"
+                                value={horario.fim}
+                                onChange={(e) =>
+                                  handleUpdateHorario(
+                                    index,
+                                    'fim',
+                                    e.target.value,
+                                  )
+                                }
+                                bg="gray.800"
+                                borderColor="gray.600"
+                                color="white"
+                                size="xs"
+                              />
+                            </FormControl>
+                          </HStack>
+                        )}
+                      </Box>
+                    ))}
+                  </VStack>
+                </TabPanel>
 
-          <Divider my={4} />
+                {/* Tab 3: Redes Sociais */}
+                <TabPanel>
+                  <VStack spacing={4} align="stretch">
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        Instagram
+                      </FormLabel>
+                      <Input
+                        value={instagram}
+                        onChange={(e) => setInstagram(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: 'orange.400' }}
+                      />
+                    </FormControl>
 
-          <HStack justify="flex-end" spacing={3}>
-            <Button
-              size="sm"
-              variant="outline"
-              colorScheme="gray"
-              onClick={() => window.history.back()}
-            >
-              Cancelar
-            </Button>
-            <Button
-              size="sm"
-              bgGradient="linear(to-r, orange.400, yellow.400)"
-              color="gray.900"
-              _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
-              onClick={handleSalvar}
-              isLoading={isLoading}
-              loadingText="Salvando..."
-            >
-              Salvar Alterações
-            </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              colorScheme="red"
-              onClick={handleReset}
-            >
-              Resetar Página
-            </Button>
-          </HStack>
-        </Flex>
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        Facebook
+                      </FormLabel>
+                      <Input
+                        value={facebook}
+                        onChange={(e) => setFacebook(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: 'orange.400' }}
+                      />
+                    </FormControl>
 
-        {/* Preview em Tempo Real */}
-        <Box display={{ base: "none", lg: "block" }}>
-          <PreviewLandingPage />
-        </Box>
-      </Grid>
+                    <FormControl>
+                      <FormLabel color="white" fontSize="sm">
+                        WhatsApp
+                      </FormLabel>
+                      <Input
+                        value={whatsapp}
+                        onChange={(e) => setWhatsapp(e.target.value)}
+                        placeholder="URL"
+                        bg="barber.900"
+                        borderColor="gray.600"
+                        color="white"
+                        size="sm"
+                        _hover={{ borderColor: 'orange.400' }}
+                      />
+                    </FormControl>
+                  </VStack>
+                </TabPanel>
+              </TabPanels>
+            </Tabs>
+
+            <Divider my={4} />
+
+            <HStack justify="flex-end" spacing={3}>
+              <Button
+                size="sm"
+                variant="unstyled"
+                onClick={() => window.history.back()}
+              >
+                Cancelar
+              </Button>
+              <Button
+                size="sm"
+                bgGradient="linear(to-r, orange.400, yellow.400)"
+                color="gray.900"
+                _hover={{ bgGradient: 'linear(to-r, orange.500, yellow.500)' }}
+                onClick={handleSalvar}
+                isLoading={isLoading}
+                loadingText="Salvando..."
+              >
+                Salvar Alterações
+              </Button>
+              <Button
+                size="sm"
+                variant="outline"
+                colorScheme="red"
+                onClick={handleReset}
+              >
+                Resetar Página
+              </Button>
+            </HStack>
+          </Flex>
+
+          {/* Preview em Tempo Real */}
+          <Box display={{ base: 'none', lg: 'block' }} h="100%">
+            <PreviewLandingPage />
+          </Box>
+        </Grid>
+      </Box>
     </Flex>
   );
 }

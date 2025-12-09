@@ -1,5 +1,5 @@
-import Head from "next/head";
-import { AgendamentoForm } from "../../components/appointmentForm/appointmentForm";
+import Head from 'next/head';
+import LandingPage from '../../components/appointmentForm/appointmentForm';
 
 export default function SimularAgendamentoPage() {
   return (

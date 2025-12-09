@@ -1,22 +1,23 @@
-import { useState } from "react";
-import Head from "next/head";
 import {
-  Flex,
-  Text,
-  Heading,
   Button,
   Link as ChakraLink,
-  useMediaQuery,
+  Flex,
+  Heading,
+  Text,
   useDisclosure,
-} from "@chakra-ui/react";
+  useMediaQuery,
+} from '@chakra-ui/react';
+import Head from 'next/head';
+import { useState } from 'react';
 
-import Link from "next/link";
-import { IoMdPerson } from "react-icons/io";
+import Link from 'next/link';
+import { IoMdPerson } from 'react-icons/io';
 
-import { canSSRAuth } from "../../utils/canSSRAuth";
-import { Sidebar } from "../components/sidebar";
-import { setupAPIClient } from "../../services/api";
-import { ModalInfo } from "../components/modal";
+import { toast } from 'sonner';
+import { setupAPIClient } from '../../services/api';
+import { canSSRAuth } from '../../utils/canSSRAuth';
+import { ModalInfo } from '../components/modal';
+import { Sidebar } from '../components/sidebar';
 
 export interface ScheduleItem {
   id: string;
@@ -39,7 +40,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
 
   const { isOpen, onOpen, onClose } = useDisclosure();
 
-  const [isMobile] = useMediaQuery("(max-width: 500px)");
+  const [isMobile] = useMediaQuery('(max-width: 500px)');
 
   function handleOpenModal(item: ScheduleItem) {
     setService(item);
@@ -49,7 +50,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
   async function handleFinish(id: string) {
     try {
       const apiClient = setupAPIClient();
-      await apiClient.delete("/schedule", {
+      await apiClient.delete('/schedule', {
         params: {
           schedule_id: id,
         },
@@ -64,7 +65,21 @@ export default function Dashboard({ schedule }: DashboardProps) {
     } catch (err) {
       console.log(err);
       onClose();
-      alert("Erro ao finalizar este serviço");
+      toast.error('Erro ao finalizar este serviço');
+    }
+  }
+
+  async function handleDelete(id: string) {
+    try {
+      const api = setupAPIClient();
+      api.put('/schedule', { schedule_id: id });
+      const filterItem = list.filter((item) => {
+        return item?.id !== service?.id;
+      });
+      setList(filterItem);
+      onClose();
+    } catch (err) {
+      console.log(err);
     }
   }
 
@@ -79,8 +94,8 @@ export default function Dashboard({ schedule }: DashboardProps) {
             <Heading fontSize="3xl" mt={4} mb={4} mr={4}>
               Agenda
             </Heading>
-            <Link href="/new">
-              <Button bg="gray.700" _hover={{ background: "gray.700" }}>
+            <Link href="/new" prefetch={true}>
+              <Button bg="gray.700" _hover={{ background: 'gray.700' }}>
                 Registrar
               </Button>
             </Link>
@@ -95,17 +110,17 @@ export default function Dashboard({ schedule }: DashboardProps) {
               p={0}
               mt={1}
               bg="transparent"
-              style={{ textDecoration: "none" }}
+              style={{ textDecoration: 'none' }}
             >
               <Flex
                 w="100%"
-                direction={isMobile ? "column" : "row"}
+                direction={isMobile ? 'column' : 'row'}
                 p={4}
                 rounded={4}
                 mb={2}
                 bg="barber.400"
                 justify="space-between"
-                align={isMobile ? "flex-start" : "center"}
+                align={isMobile ? 'flex-start' : 'center'}
               >
                 <Flex
                   direction="row"
@@ -136,6 +151,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
         onClose={onClose}
         data={service}
         finishService={() => handleFinish(service?.id)}
+        deleteService={() => handleDelete(service?.id)}
       />
     </>
   );
@@ -144,7 +160,7 @@ export default function Dashboard({ schedule }: DashboardProps) {
 export const getServerSideProps = canSSRAuth(async (ctx) => {
   try {
     const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/schedule");
+    const response = await apiClient.get('/schedule');
 
     return {
       props: {

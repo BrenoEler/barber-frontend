@@ -129,7 +129,7 @@ export default function EditHaircut({
             justifyContent="flex-start"
             mb={isMobile ? 4 : 0}
           >
-            <Link href="/haircuts">
+            <Link href="/haircuts" prefetch={true}>
               <Button
                 bg="gray.700"
                 _hover={{ background: "gray.700" }}

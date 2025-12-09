@@ -1,59 +1,68 @@
-import { ReactNode } from "react";
 import {
-  IconButton,
   Box,
+  BoxProps,
   CloseButton,
-  Flex,
-  Icon,
+  Divider,
   Drawer,
   DrawerContent,
-  useColorModeValue,
-  Text,
-  useDisclosure,
-  BoxProps,
+  Flex,
   FlexProps,
-  Divider,
-} from "@chakra-ui/react";
+  Icon,
+  IconButton,
+  Text,
+  useColorMode,
+  useColorModeValue,
+  useDisclosure,
+} from '@chakra-ui/react';
+import { ReactNode } from 'react';
 
 import {
-  FiScissors,
-  FiClipboard,
-  FiSettings,
-  FiMenu,
-  FiBarChart,
-  FiCreditCard,
+  FiBarChart2,
+  FiCalendar,
+  FiDollarSign,
   FiHelpCircle,
-} from "react-icons/fi";
-import { IoPersonAdd } from "react-icons/io5";
+  FiMenu,
+  FiMoon,
+  FiScissors,
+  FiSun,
+  FiUser,
+  FiUsers,
+} from 'react-icons/fi';
 
-import { IconType } from "react-icons";
-import { FaUserCog } from "react-icons/fa";
-import Link from "next/link";
+import Link from 'next/link';
+import { useRouter } from 'next/router';
+import { IconType } from 'react-icons';
 
 interface LinkItemProps {
   name: string;
   icon: IconType;
   route: string;
+  category?: 'main' | 'account';
 }
 
 const LinkItems: Array<LinkItemProps> = [
-  { name: "Agenda", icon: FiScissors, route: "/dashboard" },
-  { name: "Cortes", icon: FiClipboard, route: "/haircuts" },
-  { name: "Relatórios", icon: FiBarChart, route: "/reports" },
-  { name: "Caixa", icon: FiCreditCard, route: "/cashier" },
-  { name: "Suporte", icon: FiHelpCircle, route: "/support" },
-  { name: "Minha Conta", icon: FaUserCog, route: "/profile" },
-  { name: "Clientes", icon: IoPersonAdd, route: "/clientes" },
+  { name: 'Agenda', icon: FiCalendar, route: '/dashboard', category: 'main' },
+  { name: 'Cortes', icon: FiScissors, route: '/haircuts', category: 'main' },
+  {
+    name: 'Relatórios',
+    icon: FiBarChart2,
+    route: '/reports',
+    category: 'main',
+  },
+  { name: 'Caixa', icon: FiDollarSign, route: '/cashier', category: 'main' },
+  { name: 'Clientes', icon: FiUsers, route: '/clientes', category: 'main' },
+  { name: 'Suporte', icon: FiHelpCircle, route: '/support', category: 'main' },
+  { name: 'Minha Conta', icon: FiUser, route: '/profile', category: 'account' },
 ];
 
 export function Sidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
-    <Box minH="100vh" bg="barber.900">
+    <Box minH="100vh" bg={useColorModeValue('gray.100', 'barber.900')}>
       <SidebarContent
-        onClose={() => onClose}
-        display={{ base: "none", md: "block" }}
+        onClose={() => onClose()}
+        display={{ base: 'none', md: 'block' }}
       />
 
       <Drawer
@@ -70,7 +79,7 @@ export function Sidebar({ children }: { children: ReactNode }) {
         </DrawerContent>
       </Drawer>
 
-      <MobileNav display={{ base: "flex", md: "none" }} onOpen={onOpen} />
+      <MobileNav display={{ base: 'flex', md: 'none' }} onOpen={onOpen} />
       <Box ml={{ base: 0, md: 60 }} p={4}>
         {children}
       </Box>
@@ -83,25 +92,34 @@ interface SidebarProps extends BoxProps {
 }
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
-  const mainItems = LinkItems.filter((item) => item.name !== "Minha Conta");
-  const userSetting = LinkItems.find((item) => item.name === "Minha Conta");
+  const router = useRouter();
+  const mainItems = LinkItems.filter((item) => item.category === 'main');
+  const accountItem = LinkItems.find((item) => item.category === 'account');
 
   return (
     <Flex
       direction="column"
       h="full"
-      bg="barber.400"
       borderRight="1px"
-      borderRightColor={useColorModeValue("gray.200", "gray.700")}
-      w={{ base: "full", md: 60 }}
+      w={{ base: 'full', md: 60 }}
       pos="fixed"
       {...rest}
     >
-      {/* Itens que ficam no topo */}
+      {/* Logo */}
       <Flex h="20" alignItems="center" justifyContent="space-between" mx="8">
         <Link href="/dashboard">
-          <Flex cursor="pointer" userSelect="none" flexDirection="row">
-            <Text fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+          <Flex
+            cursor="pointer"
+            userSelect="none"
+            flexDirection="row"
+            align="center"
+          >
+            <Text
+              fontSize="2xl"
+              fontFamily="monospace"
+              fontWeight="bold"
+              color="white"
+            >
               Barber
             </Text>
             <Text
@@ -114,23 +132,41 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
             </Text>
           </Flex>
         </Link>
-        <CloseButton display={{ base: "flex", md: "none" }} onClick={onClose} />
+        <CloseButton
+          display={{ base: 'flex', md: 'none' }}
+          onClick={onClose}
+          color="white"
+        />
       </Flex>
 
-      {mainItems.map((link) => (
-        <NavItem icon={link.icon} route={link.route} key={link.name}>
-          {link.name}
-        </NavItem>
-      ))}
+      <Divider borderColor={useColorModeValue('gray.200', 'gray.700')} mb={2} />
 
-      {userSetting && (
+      {/* Main Navigation Items */}
+      <Flex direction="column" flex={1} overflowY="auto" py={2}>
+        {mainItems.map((link) => (
+          <NavItem
+            icon={link.icon}
+            route={link.route}
+            key={link.name}
+            isActive={router.pathname === link.route}
+          >
+            {link.name}
+          </NavItem>
+        ))}
+      </Flex>
+
+      <Divider borderColor={useColorModeValue('gray.200', 'gray.700')} mt={2} />
+
+      {/* Account Item */}
+      {accountItem && (
         <NavItem
-          marginTop="auto"
-          icon={userSetting.icon}
-          route={userSetting.route}
-          key={userSetting.name}
+          icon={accountItem.icon}
+          route={accountItem.route}
+          key={accountItem.name}
+          isActive={router.pathname === accountItem.route}
+          mt={2}
         >
-          {userSetting.name}
+          {accountItem.name}
         </NavItem>
       )}
     </Flex>
@@ -141,35 +177,51 @@ interface NavItemProps extends FlexProps {
   icon: IconType;
   children: ReactNode;
   route: string;
+  isActive?: boolean;
 }
 
-const NavItem = ({ icon, children, route, ...rest }: NavItemProps) => {
+const NavItem = ({
+  icon,
+  children,
+  route,
+  isActive = false,
+  ...rest
+}: NavItemProps) => {
   return (
-    <Link href={route} style={{ textDecoration: "none" }}>
+    <Link href={route} prefetch={true} style={{ textDecoration: 'none' }}>
       <Flex
         align="center"
         p="4"
         mx="4"
+        mb={1}
         borderRadius="lg"
         role="group"
         cursor="pointer"
+        color={isActive ? 'white' : 'whiteAlpha.700'}
+        bg={isActive ? 'barber.900' : 'transparent'}
+        transition="all 0.2s"
         _hover={{
-          bg: "barber.900",
-          color: "white",
+          bg: 'barber.900',
+          color: 'white',
+          transform: 'translateX(4px)',
         }}
         {...rest}
       >
         {icon && (
           <Icon
             mr={4}
-            fontSize="30"
+            fontSize="22"
             as={icon}
+            color={isActive ? 'button.cta' : 'currentColor'}
             _groupHover={{
-              color: "white",
+              color: 'button.cta',
             }}
+            transition="color 0.2s"
           />
         )}
-        {children}
+        <Text fontWeight={isActive ? 'semibold' : 'normal'} fontSize="sm">
+          {children}
+        </Text>
       </Flex>
     </Link>
   );
@@ -180,27 +232,37 @@ interface MobileProps extends FlexProps {
 }
 
 const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
+  const bg = useColorModeValue('white', 'gray.900');
+  const border = useColorModeValue('gray.200', 'gray.700');
+
   return (
     <Flex
       ml={{ base: 0, md: 60 }}
       px={{ base: 4, md: 24 }}
       height="20"
       alignItems="center"
-      bg={useColorModeValue("white", "gray.900")}
+      bg="barber.400"
       borderBottomWidth="1px"
-      borderBottomColor={useColorModeValue("gray.200", "gray.700")}
+      borderBottomColor={border}
       justifyContent="flex-start"
       {...rest}
     >
       <IconButton
-        variant="outline"
+        variant="ghost"
         onClick={onOpen}
         aria-label="open menu"
         icon={<FiMenu />}
+        color="white"
+        _hover={{ bg: 'barber.900' }}
       />
 
-      <Flex flexDirection="row">
-        <Text ml={8} fontSize="2xl" fontFamily="monospace" fontWeight="bold">
+      <Flex flexDirection="row" ml={4}>
+        <Text
+          fontSize="2xl"
+          fontFamily="monospace"
+          fontWeight="bold"
+          color="white"
+        >
           Barber
         </Text>
         <Text
@@ -212,6 +274,22 @@ const MobileNav = ({ onOpen, ...rest }: MobileProps) => {
           PRO
         </Text>
       </Flex>
+      <ColorModeToggle ml="auto" />
     </Flex>
   );
 };
+
+function ColorModeToggle(props?: any) {
+  const { colorMode, toggleColorMode } = useColorMode();
+
+  return (
+    <IconButton
+      aria-label="Alternar tema"
+      icon={colorMode === 'light' ? <FiMoon /> : <FiSun />}
+      onClick={toggleColorMode}
+      variant="ghost"
+      color="button.cta"
+      {...props}
+    />
+  );
+}

@@ -8,20 +8,27 @@ import {
   Input,
   Select,
   Text,
-  Table,
-  Thead,
   Box,
   Divider,
-  Center,
+  useMediaQuery,
+  useColorModeValue,
+  VStack,
+  HStack,
+  Grid,
+  Skeleton,
+  SkeletonCircle,
 } from "@chakra-ui/react";
-import { useMediaQuery } from "@chakra-ui/react";
 import { useState } from "react";
-import { SingleDatepicker } from "chakra-dayzed-datepicker";
-import { IconType } from "react-icons"; //Tipagem de icones
-import { FiClipboard, FiDollarSign, FiArchive, FiCalendar, FiEye } from "react-icons/fi";
+import { IconType } from "react-icons";
+import {
+  FiClipboard,
+  FiDollarSign,
+  FiArchive,
+  FiCalendar,
+  FiEye,
+} from "react-icons/fi";
 import { ReportCard } from "../../components/reports/ReportCard";
-import { FaFilePdf, FaTicket  } from 'react-icons/fa6';
-
+import { FaFilePdf, FaTicket } from "react-icons/fa6";
 
 //interface propriedades do relatório
 export interface ReportProps {
@@ -34,7 +41,10 @@ export interface ReportProps {
 export default function Reports() {
   const [selectDate, setSelectDate] = useState<Date | null>(new Date());
   const [isLoading, setIsLoading] = useState(false);
-  const [isMobile] = useMediaQuery("(max-width: 500px)");
+  const [isMobile] = useMediaQuery("(max-width: 600px)");
+  const [isTablet] = useMediaQuery("(max-width: 768px)");
+
+  const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
 
   const reportItems: Array<ReportProps> = [
     // {
@@ -89,59 +99,241 @@ export default function Reports() {
       </Head>
 
       <Sidebar>
-
-          <Heading fontSize="3xl" mt={4} mb={4} mr={4} color="orange.900" >
+        <Flex direction="column" w="100%" p={isMobile ? 2 : 6}>
+          {/* Cabeçalho */}
+          <Heading
+            fontSize={isMobile ? "28px" : "3xl"}
+            color="whiteAlpha.900"
+            mb={6}
+          >
             Relatórios
           </Heading>
-          {/*Utilizar o MAP para renderizar as opções do select*/}
-          <Flex direction="row" wrap={isMobile ? "wrap" : "nowrap"} align="center" gap={4}>
 
-            <Select color="orange.900"  _hover={{ bg: "gray.800" }}>
+          {/* Filtros */}
+          <Box
+            bg="barber.400"
+            borderRadius="xl"
+            p={6}
+            mb={6}
+            border="1px solid"
+            borderColor={borderColor}
+            shadow="md"
+          >
+            <VStack spacing={4} align="stretch">
+              <Text
+                fontSize="sm"
+                fontWeight="bold"
+                color="whiteAlpha.700"
+                textTransform="uppercase"
+                letterSpacing="wide"
+                mb={2}
+              >
+                Filtros de Relatório
+              </Text>
 
-              <option value="1">Relatório de agendamentos</option>
-              <option value="2">Relatório de cortes</option>
-              <option value="3">Relatório de clientes</option>
-              <option value="4">Relatório de pagamentos</option>
-              <option value="5">Relatório de usuários</option>
-              <option value="6">Relatório de financeiro</option>
-              <option value="7">Relatório de estoque</option>
+              <Grid
+                templateColumns={{
+                  base: "1fr",
+                  md: "repeat(2, 1fr)",
+                  lg: "repeat(4, 1fr)",
+                }}
+                gap={4}
+              >
+                <Box>
+                  <Text
+                    fontSize="xs"
+                    color="whiteAlpha.600"
+                    mb={2}
+                    fontWeight="medium"
+                  >
+                    Tipo de Relatório
+                  </Text>
+                  <Select
+                    bg="barber.900"
+                    color="whiteAlpha.900"
+                    borderColor={borderColor}
+                    _hover={{ borderColor: "orange.400" }}
+                    _focus={{ borderColor: "orange.400" }}
+                    size="md"
+                  >
+                    <option
+                      value="1"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de agendamentos
+                    </option>
+                    <option
+                      value="2"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de cortes
+                    </option>
+                    <option
+                      value="3"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de clientes
+                    </option>
+                    <option
+                      value="4"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de pagamentos
+                    </option>
+                    <option
+                      value="5"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de usuários
+                    </option>
+                    <option
+                      value="6"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de financeiro
+                    </option>
+                    <option
+                      value="7"
+                      style={{ backgroundColor: "#1b1c29", color: "#fff" }}
+                    >
+                      Relatório de estoque
+                    </option>
+                  </Select>
+                </Box>
 
-            </Select>
+                <Box>
+                  <Text
+                    fontSize="xs"
+                    color="whiteAlpha.600"
+                    mb={2}
+                    fontWeight="medium"
+                  >
+                    Data Inicial
+                  </Text>
+                  <Input
+                    type="date"
+                    bg="barber.900"
+                    color="whiteAlpha.900"
+                    borderColor={borderColor}
+                    _hover={{ borderColor: "orange.400" }}
+                    _focus={{ borderColor: "orange.400" }}
+                    size="md"
+                  />
+                </Box>
 
-            {/* Periodo do filtro, logo apos criar uma validação para que a data inicial seja menor que a data final*/}
+                <Box>
+                  <Text
+                    fontSize="xs"
+                    color="whiteAlpha.600"
+                    mb={2}
+                    fontWeight="medium"
+                  >
+                    Data Final
+                  </Text>
+                  <Input
+                    type="date"
+                    bg="barber.900"
+                    color="whiteAlpha.900"
+                    borderColor={borderColor}
+                    _hover={{ borderColor: "orange.400" }}
+                    _focus={{ borderColor: "orange.400" }}
+                    size="md"
+                  />
+                </Box>
 
-            <Input type="date" w={isMobile ? "100%" : "300px"} placeholder="Data inicial" color="orange.900"  _hover={{ bg: "gray.800" }} />
-            <Input type="date" w={isMobile ? "100%" : "300px"} placeholder="Data final" color="orange.900"  _hover={{ bg: "gray.800" }} />
+                <Flex align="flex-end">
+                  <Button
+                    w="100%"
+                    size="md"
+                    bgGradient="linear(to-r, orange.400, yellow.400)"
+                    color="white"
+                    _hover={{
+                      bgGradient: "linear(to-r, orange.500, yellow.500)",
+                    }}
+                    shadow="md"
+                    onClick={handleGenerateReport}
+                    loadingText="Gerando"
+                    isLoading={isLoading}
+                  >
+                    Gerar Relatório
+                  </Button>
+                </Flex>
+              </Grid>
+            </VStack>
+          </Box>
 
+          <Divider borderColor={borderColor} mb={6} />
+
+          {/* Cards de Métricas */}
+          <Box mb={6}>
+            <Text fontSize="lg" fontWeight="bold" color="whiteAlpha.900" mb={4}>
+              Métricas Gerais
+            </Text>
+            {isLoading ? (
+              <Grid
+                templateColumns={{
+                  base: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(5, 1fr)",
+                }}
+                gap={4}
+              >
+                {[...Array(5)].map((_, idx) => (
+                  <Box
+                    key={idx}
+                    bg="barber.400"
+                    borderRadius="xl"
+                    overflow="hidden"
+                    shadow="md"
+                    border="1px solid"
+                    borderColor={borderColor}
+                    p={6}
+                    minH="140px"
+                  >
+                    <VStack spacing={4} align="center">
+                      <SkeletonCircle size="12" />
+                      <Skeleton height="16px" width="80%" />
+                      <Skeleton height="24px" width="60%" />
+                    </VStack>
+                  </Box>
+                ))}
+              </Grid>
+            ) : (
+              <Grid
+                templateColumns={{
+                  base: "1fr",
+                  sm: "repeat(2, 1fr)",
+                  md: "repeat(3, 1fr)",
+                  lg: "repeat(5, 1fr)",
+                }}
+                gap={4}
+              >
+                {reportItems.map((item, idx) => (
+                  <ReportCard key={idx} item={item} />
+                ))}
+              </Grid>
+            )}
+          </Box>
+
+          {/* Botão de Exportar */}
+          <Flex justify="flex-end" mt={8}>
             <Button
-              w={isMobile ? "100%" : "300px"}
+              leftIcon={<Icon as={FaFilePdf} w={5} h={5} />}
+              w={isMobile ? "100%" : "auto"}
+              minW="200px"
               size="lg"
-              color="gray.900"
-              bg="button.cta"
-              _hover={{ bg: "#FFb13e" }}
-              onClick={handleGenerateReport}
-              loadingText="Gerando"
-              isLoading={isLoading}
+              bgGradient="linear(to-r, orange.400, yellow.400)"
+              color="white"
+              _hover={{
+                bgGradient: "linear(to-r, orange.500, yellow.500)",
+              }}
+              shadow="md"
             >
-              Gerar relatório
-            </Button>
-
-          </Flex>
-
-          <Divider position="relative" my={8}/>
-
-          <Flex direction="row" wrap="wrap" gap={4} justify="center"> 
-            {reportItems.map((item, idx) => ( 
-            <ReportCard key={idx} item={item} />
-            ))}
-          </Flex>
-
-          <Flex justify="flex-end" marginTop="10">
-            <Button leftIcon={<Icon as={FaFilePdf} w={5} h={5} />} w={isMobile ? "100%" : "200px"} size="lg" color="gray.900" bg="button.cta" _hover={{ bg: "#FFb13e" }}>
-              Exportar relatório
+              Exportar PDF
             </Button>
           </Flex>
-
+        </Flex>
       </Sidebar>
     </>
   );

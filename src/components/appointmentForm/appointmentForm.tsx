@@ -1,19 +1,19 @@
-import { useState, useEffect, ChangeEvent } from "react";
 import {
-  Flex,
-  Heading,
   Button,
+  Flex,
+  FormControl,
+  Heading,
   Input,
   Select,
   Text,
-  FormControl,
-} from "@chakra-ui/react";
-import Image from "next/image";
-import { toast } from "sonner";
-import Head from "next/head";
-import { BusinessHoursChip } from "../businesshouschip";
-import { setupAPIClient } from "../../services/api";
-import { canSSRAuth } from "../../utils/canSSRAuth";
+} from '@chakra-ui/react';
+import Head from 'next/head';
+import Image from 'next/image';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { toast } from 'sonner';
+import { setupAPIClient } from '../../services/api';
+import { canSSRAuth } from '../../utils/canSSRAuth';
+import { BusinessHoursChip } from '../businesshouschip';
 
 interface HaircutsItem {
   id: string;
@@ -28,15 +28,15 @@ interface HaircutsProps {
 }
 
 export function AgendamentoForm({ haircuts }: HaircutsProps) {
-  const [nameClient, setNomeClient] = useState("");
-  const [email, setEmail] = useState("");
-  const [celular, setCelular] = useState("");
-  const [datas, setData] = useState("");
-  const [horario, setHorario] = useState("14:30");
+  const [nameClient, setNomeClient] = useState('');
+  const [email, setEmail] = useState('');
+  const [celular, setCelular] = useState('');
+  const [datas, setData] = useState('');
+  const [horario, setHorario] = useState('14:30');
   const [haircutsList, setHaircutsList] = useState<HaircutsItem[]>(
-    haircuts || []
+    haircuts || [],
   );
-  const [haircutId, setHaircutId] = useState<string>("");
+  const [haircutId, setHaircutId] = useState<string>('');
 
   const [isLoading, setIsLoading] = useState(false);
 
@@ -46,13 +46,13 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
   useEffect(() => {
     async function loadHaircuts() {
       try {
-        const response = await api.get("/haircuts", {
+        const response = await api.get('/haircuts', {
           params: { status: true },
         });
         setHaircutsList(response.data);
       } catch (err) {
-        console.error("Erro ao carregar cortes:", err);
-        toast.error("Erro ao carregar cortes disponíveis.");
+        console.error('Erro ao carregar cortes:', err);
+        toast.error('Erro ao carregar cortes disponíveis.');
       }
     }
 
@@ -61,15 +61,15 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
 
   // 🔹 Função para formatar o celular em tempo real
   function formatarCelular(valor: string) {
-    valor = valor.replace(/\D/g, "");
+    valor = valor.replace(/\D/g, '');
     if (valor.length > 10) {
-      valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, "($1) $2-$3");
+      valor = valor.replace(/^(\d{2})(\d{5})(\d{4}).*/, '($1) $2-$3');
     } else if (valor.length > 6) {
-      valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, "($1) $2-$3");
+      valor = valor.replace(/^(\d{2})(\d{4})(\d{0,4}).*/, '($1) $2-$3');
     } else if (valor.length > 2) {
-      valor = valor.replace(/^(\d{2})(\d{0,5})/, "($1) $2");
+      valor = valor.replace(/^(\d{2})(\d{0,5})/, '($1) $2');
     } else {
-      valor = valor.replace(/^(\d*)/, "$1");
+      valor = valor.replace(/^(\d*)/, '$1');
     }
     return valor;
   }
@@ -80,18 +80,18 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
 
   async function handleSubmit() {
     try {
-      const { data: userData } = await api.get("/me");
+      const { data: userData } = await api.get('/me');
       const chatTelegram = userData?.telegramChatId;
       const userId = userData?.id;
 
       if (!nameClient || !celular || !datas || !horario || !haircutId) {
-        toast.error("Todos os campos devem ser preenchidos.");
+        toast.error('Todos os campos devem ser preenchidos.');
         return;
       }
 
       setIsLoading(true);
 
-      await api.post("/appointments", {
+      await api.post('/appointments', {
         name: nameClient,
         email,
         celular,
@@ -102,33 +102,33 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
         haircutId,
       });
 
-      toast.success("Solicitação enviada com sucesso!");
-      setNomeClient("");
-      setEmail("");
-      setCelular("");
-      setData("");
-      setHorario("14:30");
-      setHaircutId("");
+      toast.success('Solicitação enviada com sucesso!');
+      setNomeClient('');
+      setEmail('');
+      setCelular('');
+      setData('');
+      setHorario('14:30');
+      setHaircutId('');
     } catch (err) {
       console.error(err);
-      toast.error("Erro ao enviar solicitação.");
+      toast.error('Erro ao enviar solicitação.');
     } finally {
       setIsLoading(false);
     }
   }
 
-  const logoImg = "/images/logo.svg";
+  const logoImg = '/images/logo.svg';
 
   const inputHover = {
-    borderColor: "white",
-    bg: "barber.900",
+    borderColor: 'white',
+    bg: 'barber.900',
   };
 
   const inputBaseStyle = {
-    borderColor: "barber.900",
-    bg: "barber.400",
-    w: "85%",
-    size: "lg",
+    borderColor: 'barber.900',
+    bg: 'barber.400',
+    w: '85%',
+    size: 'lg',
     _hover: inputHover,
     _focus: inputHover,
     mb: 3,
@@ -247,7 +247,7 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
               size="lg"
               color="gray.900"
               bgGradient="linear(to-r, orange.400, yellow.400)"
-              _hover={{ bgGradient: "linear(to-r, orange.500, yellow.500)" }}
+              _hover={{ bgGradient: 'linear(to-r, orange.500, yellow.500)' }}
               onClick={handleSubmit}
               loadingText="Enviando..."
               isLoading={isLoading}
@@ -281,7 +281,7 @@ export function AgendamentoForm({ haircuts }: HaircutsProps) {
 export const getServerSideProps = canSSRAuth(async (ctx) => {
   try {
     const apiClient = setupAPIClient(ctx);
-    const response = await apiClient.get("/haircuts", {
+    const response = await apiClient.get('/haircuts', {
       params: { status: true },
     });
 
