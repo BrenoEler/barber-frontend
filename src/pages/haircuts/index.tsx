@@ -52,7 +52,7 @@ export default function Haircuts({ haircuts }: HaircutsProps) {
   const [isLoading, setIsLoading] = useState(false);
 
   const cardBg = useColorModeValue("barber.400", "gray.800");
-  const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
+  const borderColor = useColorModeValue("black", "gray.600");
 
   async function handleDisable(e: ChangeEvent<HTMLInputElement>) {
     const apiClient = setupAPIClient();
@@ -105,7 +105,7 @@ export default function Haircuts({ haircuts }: HaircutsProps) {
           >
             <Heading
               fontSize={isMobile ? "28px" : "3xl"}
-              color="whiteAlpha.900"
+              color={useColorModeValue("black", "whiteAlpha.900")}
             >
               Modelos de corte
             </Heading>
@@ -131,11 +131,15 @@ export default function Haircuts({ haircuts }: HaircutsProps) {
               </Link>
 
               <Stack align="center" direction="row">
-                <Text fontWeight="bold" color="whiteAlpha.900">
+                <Text fontWeight="bold" color={useColorModeValue("black", "whiteAlpha.900")}>
                   ATIVOS
                 </Text>
                 <Switch
-                  colorScheme="green"
+                    sx={{
+                    ".chakra-switch__track[data-checked]": {
+                      bg: "#38ca7aff",
+                    },
+                  }}
                   size="lg"
                   value={disableHaircut}
                   onChange={(e: ChangeEvent<HTMLInputElement>) =>

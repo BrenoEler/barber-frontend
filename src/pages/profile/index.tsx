@@ -25,12 +25,10 @@ import { BsPencilSquare } from 'react-icons/bs';
 import { FaTelegram } from 'react-icons/fa';
 import {
   FiUser,
-  FiMail,
-  FiMapPin,
-  FiCrown,
   FiEdit3,
   FiLogOut,
   FiSave,
+  FiCrown,
 } from 'react-icons/fi';
 import { AuthContext } from '../../context/AuthContext';
 import { setupAPIClient } from '../../services/api';
@@ -61,7 +59,7 @@ export default function Profile({ user, premium }: ProfileProps) {
   const [checked, setChecked] = useState('');
 
   const cardBg = useColorModeValue('barber.400', 'gray.800');
-  const borderColor = useColorModeValue('whiteAlpha.300', 'gray.600');
+  const borderColor = useColorModeValue('black', 'gray.600');
 
   function joinTelegram() {
     window.open('https://t.me/barber_appointmentsBot', '_blank');
@@ -112,7 +110,7 @@ export default function Profile({ user, premium }: ProfileProps) {
           {/* Cabeçalho */}
           <Heading
             fontSize={isMobile ? '28px' : '3xl'}
-            color="whiteAlpha.900"
+            color={useColorModeValue("black", "whiteAlpha.900")}
             mb={6}
           >
             Minha Conta

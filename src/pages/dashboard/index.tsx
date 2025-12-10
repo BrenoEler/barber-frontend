@@ -90,7 +90,7 @@ export default function Dashboard({
 
   const cardBg = useColorModeValue('barber.400', 'gray.800');
   const hoverBg = useColorModeValue('whiteAlpha.300', 'gray.700');
-  const borderColor = useColorModeValue('whiteAlpha.300', 'gray.600');
+  const borderColor = useColorModeValue('black', 'gray.600');
 
   // Filtrar e ordenar lista
   const filteredList = useMemo(() => {
@@ -267,7 +267,7 @@ export default function Dashboard({
             flexWrap="wrap"
             mb={6}
           >
-            <Heading fontSize="3xl" color="whiteAlpha.900">
+            <Heading fontSize="3xl" color={useColorModeValue("black", "whiteAlpha.900")}>
               Agendamentos
             </Heading>
             <Flex align="center" gap={3} mt={isMobile ? 3 : 0}>

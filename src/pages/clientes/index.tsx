@@ -90,7 +90,7 @@ export default function ClientesPage() {
   const [isMobile] = useMediaQuery("(max-width: 600px)");
   const [isLoading, setIsLoading] = useState(false);
   const cardBg = useColorModeValue("barber.400", "gray.800");
-  const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
+  const borderColor = useColorModeValue("black", "gray.600");
 
   // Filtros e pesquisa
   const [searchTerm, setSearchTerm] = useState("");
@@ -149,7 +149,7 @@ export default function ClientesPage() {
           flexWrap="wrap"
           gap={4}
         >
-          <Heading fontSize={isMobile ? "28px" : "3xl"} color="whiteAlpha.900">
+          <Heading fontSize={isMobile ? "28px" : "3xl"} color={useColorModeValue("black", "whiteAlpha.900")}>
             Clientes
           </Heading>
 

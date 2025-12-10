@@ -143,7 +143,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         <ColorModeToggle ml="auto" display={isMobile ? 'none' : 'flex'} />
       </Flex>
 
-      <Divider borderColor={useColorModeValue('gray.200', 'gray.700')} mb={2} />
+      <Divider borderColor={useColorModeValue('black', 'gray.700')} mb={2} />
 
       {/* Main Navigation Items */}
       <Flex direction="column" flex={1} overflowY="auto" py={2}>
@@ -159,7 +159,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
         ))}
       </Flex>
 
-      <Divider borderColor={useColorModeValue('gray.200', 'gray.700')} mt={2} />
+      <Divider borderColor={useColorModeValue('black', 'gray.700')} mt={2} />
 
       {/* Account Item */}
       {accountItem && (
@@ -296,6 +296,7 @@ function ColorModeToggle(props?: any) {
       onClick={toggleColorMode}
       variant="ghost"
       color="button.cta"
+      _hover={{bg: useColorModeValue("gray.300", "whiteAlpha.300")}}
       {...props}
     />
   );

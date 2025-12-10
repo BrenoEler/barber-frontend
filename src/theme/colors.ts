@@ -1,5 +1,3 @@
-// src/theme/colors.ts
-
 const colors = {
   barber: {
     900: "#12131b",

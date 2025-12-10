@@ -44,7 +44,7 @@ export default function Reports() {
   const [isMobile] = useMediaQuery("(max-width: 600px)");
   const [isTablet] = useMediaQuery("(max-width: 768px)");
 
-  const borderColor = useColorModeValue("whiteAlpha.300", "gray.600");
+  const borderColor = useColorModeValue("black", "gray.600");
 
   const reportItems: Array<ReportProps> = [
     // {
@@ -103,7 +103,7 @@ export default function Reports() {
           {/* Cabeçalho */}
           <Heading
             fontSize={isMobile ? "28px" : "3xl"}
-            color="whiteAlpha.900"
+            color={useColorModeValue("black", "whiteAlpha.900")}
             mb={6}
           >
             Relatórios
@@ -266,7 +266,7 @@ export default function Reports() {
 
           {/* Cards de Métricas */}
           <Box mb={6}>
-            <Text fontSize="lg" fontWeight="bold" color="whiteAlpha.900" mb={4}>
+            <Text fontSize="lg" fontWeight="bold" color={useColorModeValue("black", "whiteAlpha.900")} mb={4}>
               Métricas Gerais
             </Text>
             {isLoading ? (
