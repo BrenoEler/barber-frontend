@@ -121,7 +121,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
               fontSize="2xl"
               fontFamily="monospace"
               fontWeight="bold"
-              color="white"
+              color={useColorModeValue("black", "white")}
             >
               Barber
             </Text>
@@ -201,16 +201,19 @@ const NavItem = ({
         borderRadius="lg"
         role="group"
         cursor="pointer"
-        color={isActive ? 'white' : 'whiteAlpha.700'}
-        bg={isActive ? 'barber.900' : 'transparent'}
+        color={isActive
+          ? useColorModeValue("black", "white")
+          : useColorModeValue("blackAlpha.700", "whiteAlpha.700")
+        }
+        bg={isActive ? useColorModeValue("gray.200", "barber.900") : "transparent"}
         transition="all 0.2s"
         _hover={{
-          bg: 'barber.900',
-          color: 'white',
-          transform: 'translateX(4px)',
+          bg: useColorModeValue("gray.300", "barber.900"),
+          color: useColorModeValue("black", "white"),
+          transform: "translateX(4px)",
         }}
         {...rest}
-      >
+        >
         {icon && (
           <Icon
             mr={4}
