@@ -5,6 +5,7 @@ import {
   color,
   filter,
   Select,
+  ColorModeScript,
 } from "@chakra-ui/react";
 import { extendTheme } from "@chakra-ui/react";
 
@@ -49,16 +50,24 @@ const customTime = {
   },
 };
 
-const theme = extendTheme({ styles, colors, customTime });
+const config = {
+  initialColorMode: "dark",
+  useSystemColorMode: false,
+};
+
+const theme = extendTheme({ config, styles, colors, customTime });
 
 function MyApp({ Component, pageProps }: AppProps) {
   return (
-    <ChakraProvider theme={theme}>
-      <AuthProvider>
-        <Toaster richColors position="top-right" />
-        <Component {...pageProps} />
-      </AuthProvider>
-    </ChakraProvider>
+    <>
+      <ColorModeScript initialColorMode={theme.config.initialColorMode} />
+      <ChakraProvider theme={theme}>
+        <AuthProvider>
+          <Toaster richColors position="top-right" />
+          <Component {...pageProps} />
+        </AuthProvider>
+      </ChakraProvider>
+    </>
   );
 }
 

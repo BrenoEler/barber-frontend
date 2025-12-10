@@ -13,6 +13,7 @@ import {
   useColorMode,
   useColorModeValue,
   useDisclosure,
+  useMediaQuery
 } from '@chakra-ui/react';
 import { ReactNode } from 'react';
 
@@ -55,9 +56,10 @@ const LinkItems: Array<LinkItemProps> = [
   { name: 'Minha Conta', icon: FiUser, route: '/profile', category: 'account' },
 ];
 
+
+
 export function Sidebar({ children }: { children: ReactNode }) {
   const { isOpen, onOpen, onClose } = useDisclosure();
-
   return (
     <Box minH="100vh" bg={useColorModeValue('gray.100', 'barber.900')}>
       <SidebarContent
@@ -93,6 +95,7 @@ interface SidebarProps extends BoxProps {
 
 const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
   const router = useRouter();
+  const [isMobile] = useMediaQuery("(max-width: 768px)");
   const mainItems = LinkItems.filter((item) => item.category === 'main');
   const accountItem = LinkItems.find((item) => item.category === 'account');
 
@@ -137,6 +140,7 @@ const SidebarContent = ({ onClose, ...rest }: SidebarProps) => {
           onClick={onClose}
           color="white"
         />
+        <ColorModeToggle ml="auto" display={isMobile ? 'none' : 'flex'} />
       </Flex>
 
       <Divider borderColor={useColorModeValue('gray.200', 'gray.700')} mb={2} />
@@ -285,7 +289,7 @@ function ColorModeToggle(props?: any) {
   return (
     <IconButton
       aria-label="Alternar tema"
-      icon={colorMode === 'light' ? <FiMoon /> : <FiSun />}
+      icon={colorMode === 'dark' ? <FiSun /> : <FiMoon />}
       onClick={toggleColorMode}
       variant="ghost"
       color="button.cta"
